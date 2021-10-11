@@ -1,7 +1,7 @@
 #include <ctime>
 
-extern time_t time_val;
+extern const int sub_val = 21;
 
-void f(int a) {
-    time_val = a;
+int f() {
+    return ::sub_val;
 }

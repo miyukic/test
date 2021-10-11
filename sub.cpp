@@ -1,7 +1,7 @@
 #include <ctime>
 
-extern const int sub_val = 21;
+extern const int sub_val = 3;
 
-int f() {
-    return ::sub_val;
-}
+//const char* f() {
+//    return ::sub_val;
+//}

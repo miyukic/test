@@ -23,7 +23,6 @@ int main() {
     //printf("%s\n", p_val);
     //printf("%ld\n", time_val);
     //printf("%d\n", I);
-    sub_val = const_cast<int>(sub_val);
     std::cout << sub_val << std::endl;
     std::cout << f() << std::endl;
 

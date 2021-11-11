@@ -1,79 +1,63 @@
-//https://www.youtube.com/watch?v=to_byzZXBFg
-#include <iostream>
-#include <bit>
+#include <stdio.h> // 駒の文字(先手:X 後手:O)
+char koma[2] = {'X', 'O'};
 
-
-uint32_t add(const uint32_t&, const uint32_t&);
-uint32_t sub(const uint32_t&, const uint32_t&);
-uint8_t getBit(uint32_t, uint32_t);
-
-bool hAdd(const uint8_t&, const uint8_t&, uint8_t&, uint8_t&); 
-bool fAdd(const uint8_t&, const uint8_t&, const uint8_t&, uint8_t&, uint8_t&); 
-
-int main() {
-    //std::cout << "add(3, 5)=" << add(3, 5) << std::endl;
-    //std::cout << "sub(10, 5)=" << sub(323, 5) << std::endl;
-
-    std::cout << "333 + 214" << add(333, 214) << " = " << 333 + 214 << std::endl;
+// 盤表示関数
+void print_board(char board[])
+{
+  printf("%c|%c|%c\n", board[0], board[1], board[2]);
+  printf("%c|%c|%c\n", board[3], board[4], board[5]);
+  printf("%c|%c|%c\n", board[6], board[7], board[8]);
+}
+    // 置けるかチェック関数
+int check(char board[], char x)
+{
+  int i;
+  // 入力した文字の範囲判定
+  if (x < 'a' || 'i' < x)
+  {
+    return 0;
+  }
+  i = x - 'a'; // 'a'～'z'→0～8に変換
+  // すでに置かれているか判定
+  if (board[i] != x)
+  {
+    return 0;
+  }
+  return 1;
 }
 
-uint32_t add(const uint32_t &a, const uint32_t &b) {
-    
-    uint8_t sum = 0;            //加算器のsum
-    uint8_t carry = 0;          //加算器のcarry
-    hAdd(getBit(a, 1), getBit(b, 1), sum, carry);
-    uint32_t result = 0;            //すべての桁を足し合わせた結果
-    result = sum;
-    for (size_t N = 1; N <= std::numeric_limits<uint32_t>::digits; N++) {
-        uint8_t return_carry;
-        fAdd(carry, getBit(a, N), getBit(b, N), sum, return_carry); 
-        result += sum;
-        carry = return_carry;
+// メイン関数
+int main(void)
+{
+  char board[9] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
+  char x = 'a';
+  int turn;
+  int teban;
+  int ok;
+
+  printf("三目並べを始めます。\n");
+  // 9回繰り返し
+  for (turn = 0; turn < 9; turn++)
+  {
+    teban = turn % 2;
+    // 置けるマスを入力するまで繰り返し
+    ok = 0;
+    while (ok == 0)
+    {
+      print_board(board); // 盤表示
+      // 置く場所入力
+      printf("どこに%cをいれますか?\n", koma[teban]);
+      printf("a～iで指定してください。\n");
+      rewind(stdin); // 入力データをクリア(scanfで[Enter]を読んでしまう問題を回避)
+      scanf("%c", &x);
+      // 置く判定
+      if (check(board, x))
+      {
+        ok = 1;
+      }
     }
-
-    return result;
-    //return a + b;    
+    // 置く処理
+    board[x - 'a'] = koma[teban];
+  }
+  return 0;
 }
-
-uint32_t sub(const uint32_t &a, const uint32_t &b) {
-    uint32_t t = ~b;
-    t++;
-    return add(a, t);
-}
-
-uint8_t getBit(const uint64_t a, const uint64_t N) {
-    return static_cast<uint8_t>((a >> N) & 1ULL);
-}
-
-bool hAdd(const uint8_t& a,
-        const uint8_t& b,
-        uint8_t &result,
-        uint8_t &carry) {
-    bool bl = false;
-    bl |= a > 1;
-    bl |= b > 1;
-    carry = a & b;
-    result = a ^ b;
-    return !bl;
-} 
-
-bool fAdd(const uint8_t &a,
-        const uint8_t &b,
-        const uint8_t &c,
-        uint8_t &result,
-        uint8_t &carry) {
-    bool bl = false;
-    bl |= a > 1;
-    bl |= b > 1;
-    bl |= c > 1;
-    
-    uint8_t c1 = 0;
-    uint8_t r_ = 0;
-    hAdd(a, b, r_, c1);
-    uint8_t c2 = 0;
-    hAdd(c, r_, result, c1);
-
-    carry = c1 & c2;
-    return !bl;
-}
-

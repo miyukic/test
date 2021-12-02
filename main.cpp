@@ -1,11 +1,8 @@
+#include <cstdint>
 #include <iostream>
 
-extern "C" {
-    void cfunc(void);
-}
-
 int main() {
-    cfunc();
-    return 0;
+    for (size_t i = 0; i < 64; ++i) {
+    }
 }
 

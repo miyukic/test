@@ -12,7 +12,8 @@ class Program {
                 );
 
         Expression<Func<int>> lambda = Expression.Lambda<Func<int>>(body);
-        System.Console.WriteLine(lambda.);
+        Func<int> func = lambda.Compile();
+       Console.WriteLine(func());
     }
 }
 

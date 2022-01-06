@@ -1,12 +1,33 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System;
-using System.Linq.Expressions;
+//using System.Linq.Expressions;
+using System.Numerics;
+using System.Timers;
 
-Console.WriteLine("aiueo");
 
-class Program {
-    public static int Main(String[] args) {
-        return 0;       
+partial class Program {
+
+    public static async Task Main(String[] args) {
+        var a = Program.CalcCall(40);
+        Console.WriteLine(a);
+    }
+
+
+    public static async Task<BigInteger> CalvCall(int n) {
+        return await Calc(n);
+    }
+
+
+    public static BigInteger Calc(int n) {
+        if (n == 0) {
+            return new BigInteger(0);
+        }
+
+        if (n == 1) {
+            return Calc(0) + new BigInteger(1);
+        }
+
+        return Calc(n - 1) + Calc(n - 2);
     }
 }
 

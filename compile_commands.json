@@ -1,0 +1,18 @@
+[
+    {
+        "arguments": [
+            "clang++-11",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-std=c++20",
+            "-I/usr/include/python3.8",
+            "-I/home/mk9/.local/lib/python3.8/site-packages/numpy/core/include",
+            "-o",
+            "bnp.out",
+            "bs_needle_problem.cpp"
+        ],
+        "directory": "/home/mk9/source1/Buffon-s-needle-problem/c++",
+        "file": "bs_needle_problem.cpp"
+    }
+]

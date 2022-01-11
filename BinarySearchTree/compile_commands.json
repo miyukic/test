@@ -1,0 +1,11 @@
+[
+    {
+        "arguments": [
+            "clang++-11",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-std=c++20"
+        ]
+    }
+]

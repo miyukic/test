@@ -7,7 +7,7 @@
 
 class CityTree {
 private:
-    static class Node {
+    class Node {
     public:
         int population = 0;
         std::string cityNmae = "";
@@ -15,44 +15,70 @@ private:
         std::shared_ptr<Node> rightNode = nullptr;
     };
 
-    std::vector<std::shared_ptr<Node>> _nodeList;
+    std::shared_ptr<Node> firstNode;
 public:
     // コンストラクタ―
     CityTree() {
     }
 
+    // <summary>
+    //   ノードを受け取ってツリーに追加します。
+    //   <param name="newNode">
+    //     ノードを受け取ります。
+    //   </pram>
+    // </summary>
+    void addNode(std::unique_ptr<Node> newNode) {
+        int n = newNode->population;
+        std::shared_ptr<Node> searchedNode = searchNode(n);
+        if (searchedNode == nullptr) {
+            this->firstNode = std::move(newNode);
+            return;
+        }
+        if (searchedNode->population > n) {
+            searchedNode->leftNode = std::move(newNode);
+        } else if (searchedNode->population < n) {
+            searchedNode->rightNode = std::move(newNode);
+        }
+    }
+
     void addNode(int population, std::string cityName) {
-        auto node = std::make_shared<Node>(Node{population, cityName});    
-        _nodeList.push_back(node);
-        int n = node->population;
-        searchNode(30);
+        auto newNode = std::make_unique<Node>(Node{population, cityName});    
+        addNode(std::move(newNode));
     }
+
 private:
-    //指定した人口に近いノードを返します。
-    //存在しない場合はnullptrを返す。
+    // <summary>
+    //   指定した人口に近いノードを返します。
+    //   存在しない場合はnullptrを返す。
+    // </summary>
+    // <param name="population">人口を受け取ります。</param>
     std::shared_ptr<Node> searchNode(int population) {
-        if (this->_nodeList.size() < 1) {
-            return nullptr;
-        }
-
-        auto curNode = _nodeList.at(0);
-        if (curNode->population < population) {
-            // 大きい方を探す、右側を探す
-            do {
+        if (firstNode == nullptr) return nullptr;
+        std::shared_ptr<Node> curNode = this->firstNode;
+        while(true) {
+            if (curNode->population == population) {
+                break;
+            } else if(curNode->population > population) {
+                if (curNode->leftNode == nullptr) break;
+                curNode = curNode->leftNode;
+            } else if(curNode->population < population) {
+                if (curNode->rightNode == nullptr) break;
                 curNode = curNode->rightNode;
-            } while (curNode->population < population);
-        } else {
-            // 小さい方を探す、左側を探す
+            }
         }
-        
+
+        return curNode;
     }
-
-
 
 };
 
 int main() {
-    CityTree* tree = new CityTree();
+    std::unique_ptr<CityTree> tree = std::make_unique<CityTree>(CityTree());
     tree->addNode(195 * std::pow(10, 4), "sapporo");
+    tree->addNode(196 * std::pow(10, 4), "oosaka");
+    tree->addNode(197 * std::pow(10, 4), "nagoya");
+    tree->addNode(198 * std::pow(10, 4), "hukuoka");
+    tree->addNode(199 * std::pow(10, 4), "tokyo");
+    tree->addNode(200 * std::pow(10, 4), "sendai");
 }
 

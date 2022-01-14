@@ -1,8 +1,7 @@
-#include <cstdint>
-#include <iostream>
+
+void Sub();
 
 int main() {
-    for (size_t i = 0; i < 64; ++i) {
-    }
+    Sub();
 }
 

@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using System.Threading;
 
 namespace Miyuki.Test {
+
 class Program {
+
     public static async Task<string> HevyMethod() {
         Console.WriteLine("HevyMethod開始");
         await Task.Run(() => Thread.Sleep(1000));
@@ -24,8 +26,14 @@ class Program {
         return result;
     }
 
+    public async Task TestAsync() {
+        Console.WriteLine("Program#TestAsync");
+        Task.Run(() => Console.WriteLine("Program#TestAsync"));
+    }
+
     public static async Task Main(string[] args) {
-        MyAsyncMethod2();
+        Program pro = new();
+        await pro.TestAsync();
     }
 }
 }

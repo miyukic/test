@@ -75,7 +75,7 @@ namespace Myk {
             var paraX1X2 = new Matrix1x2(new double[] {1D, 1D});
             double resultY = StepFunc(paraX1X2.DotProduct(weightW1W2) + b);
             Console.WriteLine(resultY);
-//            Console.
+            Application.Run(new Form1());
         }
     }
 

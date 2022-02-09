@@ -8,13 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Myk
-{
-    public partial class Form1 : Form
-    {
-        public Form1()
-        {
+namespace Myk {
+    public partial class Form1 : Form {
+        public Form1() {
             InitializeComponent();
         }
+
+        protected override void OnPaint(PaintEventArgs e) {
+            e.Graphics.DrawRectangle(new Pen(BackColor),new Rectangle());
+        }
     }
+
 }

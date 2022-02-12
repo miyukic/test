@@ -2,6 +2,9 @@
 #include <string>
 #include <windows.h>
 #include <memory>
+#include <xstring>
+
+#include "test.hpp"
 
 using namespace std::literals::string_literals;
 
@@ -11,22 +14,19 @@ constexpr int FPS = 60;
 void onTimer(void);
 void onDraw(void);
 
+const  std::string Console::ESC = "\u001B";
 
-class Console {
-    static std::string ESC = "\u001B"s;
-public:
-    static void clear() {
-        std::cout << ESC + "1J\n"s;
-    }
+void Console::clear() {
+    std::cout << ESC + "1J\n"s;
+}
 
-    static void moveCursor(const int row, const int colum) {
-        std::cout << "\u001B[" << row << ";" << colum << "H\n";
-    }
+void moveCursor(const int row, const int colum) {
+    std::cout << "\u001B[" << row << ";" << colum << "H\n";
+}
 
-    static void hideCursor() {
-        std::cout << "\u001B[>5h";
-    }
-}; 
+void hideCursor() {
+    std::cout << "\u001B[>5h";
+}
 
 int main(int argc, char* argv[]) {
     std::cout << argv[0] << std::endl;

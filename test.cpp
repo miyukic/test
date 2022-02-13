@@ -17,6 +17,9 @@ void onTimer(void);
 void onDraw(void);
 
 
+class Foo {
+    inline static const std::string STRINGS = "Foo.STRINGS";
+};
 
 
 int x[] = {
@@ -68,6 +71,9 @@ int main(int argc, char* argv[]) {
         //std::cout << argv[i] << std::endl;
         dbg(argv[i])
     }
+
+    Fuga fuga;
+    fuga.hoge();
     
     while (true) {
         Sleep(1000 / FPS);        

@@ -210,7 +210,7 @@ namespace Myk {
             //Application.Run(new Form1());
         }
 
-        static partial void HelloFrom(string name);
+        //static partial void HelloFrom(string name);
     }
 
 } // Myk namespace end

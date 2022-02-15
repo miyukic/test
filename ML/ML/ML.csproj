@@ -9,5 +9,10 @@
     <StartupObject></StartupObject>
     <RootNamespace>Myk</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SG\SG.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+    </ItemGroup>
 
 </Project>

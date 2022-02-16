@@ -202,6 +202,8 @@ namespace Myk {
             return x * w + bias;
         }
 
+        const double d = 1E-5D;
+        const double dd = 1E-5D * 2;
         /// <summary>
         /// 数値微分をするメソッド
         /// </summary>
@@ -209,8 +211,7 @@ namespace Myk {
         /// <param name="f">対象の式</param>
         /// <returns>傾き</returns>
         public static double Bibun(double x, Func<double, double> f) {
-            var d = 1E-5D;
-            return (f(x + d) - f(x - d)) / (2*d);
+            return (f(x + d) - f(x - d)) / dd;
         }
         /// <summary>
         /// 数値微分をするメソッド
@@ -222,6 +223,24 @@ namespace Myk {
             var d = 1E-7M;
             return (f(x + d) - f(x - d)) / (2*d);
         }
+
+        /// <summary>
+        /// 勾配を計算をします
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="x2"></param>
+        /// <param name="f"></param>
+        /// <returns>勾配(x2を固定し、x1軸の傾き, x1を固定しx2軸の傾き)</returns>
+        public static (double, double) NumericGrad(double x1, double x2,
+            Func<double, double, double> f) {
+            double gradX1 = (f(x1 + d, x2) - f(x1 - d, x2)) / dd;
+            double gradX2 = (f(x1, x2 + d) - f(x1, x2 - d)) / dd;
+            return (gradX1, gradX2);
+        }
+
+        //public static double GradDiscent(double x1, double x2, Func<double, double, double> f) {
+        //    (double, double) dX1dX2 = HenBibun(x1, x2, f);
+        //}
 
         static void Routine(Matrix2x1 weight, double bias, int count) {
             if (0 >= count) return;
@@ -247,55 +266,55 @@ namespace Myk {
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
             //ICollection<int> list = new LinkedList<int>();
-            ICollection<int> list = new List<int>(100000);
-            for (int i = -50000; i < 50000; i++) {
-                list.Add(i / 20);
-            }
+            //ICollection<int> list = new List<int>(100000);
+            //for (int i = -50000; i < 50000; i++) {
+            //    list.Add(i / 20);
+            //}
 
-            Stopwatch sw = new Stopwatch();
-            for (int k = 0; k < 5; k++) {
-                Func<decimal, decimal> g = (x) => x * x;
-                sw.Start();
-                foreach (int i in list) {
-                    decimal result2 = Bibun(i, g);
-                }
-                sw.Stop();
-                var time = sw.ElapsedMilliseconds;
-                Console.WriteLine(" LinkedList + decimal:" + time + " ms");
-                sw.Reset();
+            //Stopwatch sw = new Stopwatch();
+            //for (int k = 0; k < 5; k++) {
+            //    Func<decimal, decimal> g = (x) => x * x;
+            //    sw.Start();
+            //    foreach (int i in list) {
+            //        decimal result2 = Bibun(i, g);
+            //    }
+            //    sw.Stop();
+            //    var time = sw.ElapsedMilliseconds;
+            //    Console.WriteLine(" LinkedList + decimal:" + time + " ms");
+            //    sw.Reset();
 
-                Func<double, double> f = (x) => x * x;
-                sw.Start();
-                foreach (int i in list) {
-                    double result2 = Bibun(i, f);
-                }
-                sw.Stop();
-                time = sw.ElapsedMilliseconds;
-                Console.WriteLine(" LinkedList + double:" + time + " ms");
-            }
+            //    Func<double, double> f = (x) => x * x;
+            //    sw.Start();
+            //    foreach (int i in list) {
+            //        double result2 = Bibun(i, f);
+            //    }
+            //    sw.Stop();
+            //    time = sw.ElapsedMilliseconds;
+            //    Console.WriteLine(" LinkedList + double:" + time + " ms");
+            //}
 
-            Console.WriteLine("===============================================");
+            //Console.WriteLine("===============================================");
 
-            for (int j = 0; j < 5; j++) {
-                Func<decimal, decimal> g = (x) => x * x;
-                sw.Start();
-                for (int i = -50000; i < 50000; i++) {
-                    decimal result2 = Bibun(i / 20, g);
-                }
-                sw.Stop();
-                var t = sw.ElapsedMilliseconds;
-                Console.WriteLine("forloop + decimal: " + t + " ms");
-                sw.Reset();
+            //for (int j = 0; j < 5; j++) {
+            //    Func<decimal, decimal> g = (x) => x * x;
+            //    sw.Start();
+            //    for (int i = -50000; i < 50000; i++) {
+            //        decimal result2 = Bibun(i / 20, g);
+            //    }
+            //    sw.Stop();
+            //    var t = sw.ElapsedMilliseconds;
+            //    Console.WriteLine("forloop + decimal: " + t + " ms");
+            //    sw.Reset();
 
-                Func<double, double> f = (x) => x * x;
-                sw.Start();
-                for (int i = -50000; i < 50000; i++) {
-                    double result = Bibun(i / 20, f);
-                }
-                sw.Stop();
-                t = sw.ElapsedMilliseconds;
-                Console.WriteLine("forloop + double: " + t + " ms");
-            }
+            //    Func<double, double> f = (x) => x * x;
+            //    sw.Start();
+            //    for (int i = -50000; i < 50000; i++) {
+            //        double result = Bibun(i / 20, f);
+            //    }
+            //    sw.Stop();
+            //    t = sw.ElapsedMilliseconds;
+            //    Console.WriteLine("forloop + double: " + t + " ms");
+            //}
 
             //Application.Run(new Form1());
         }

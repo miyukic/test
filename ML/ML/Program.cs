@@ -261,6 +261,7 @@ namespace Myk {
             Console.WriteLine("================学習残り " + (count - 1) + " 回===========================");
             Routine(newWeight, newBias, --count);
         }
+
         [STAThread]
         static void Main() {
             //Routine(weightW1W2, bias, 教師データ.Length);

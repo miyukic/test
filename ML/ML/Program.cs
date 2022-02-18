@@ -59,13 +59,19 @@ namespace Myk {
     namespace Lib {
 
 #region Matrix
-        //(x1, x2)
+
+        /// <summary>
+        ///  MatrixClass
+        /// [x1, x2]
+        /// </summary>
         public class Matrix1x2 {
             private double[] x1x2 = new double[] {0, 0};
 
             public Matrix1x2(double[] x1x2) {
                 this.x1x2 = x1x2;
             }
+
+            public Matrix1x2(double x1, double x2) : this(new double[] { x1, x2 }) { }
 
             public double GetX1() {
                 return x1x2[0];
@@ -94,14 +100,20 @@ namespace Myk {
                 return x1x2[1];
             }
         }
-        // (x1)
-        // (y1)
+
+        /// <summary>
+        ///  MatrixClass
+        /// [x1]
+        /// [y1]
+        /// </summary>
         public class Matrix2x1 {
             private double[] x1y1 = new double[] {0, 0};
 
             public Matrix2x1(double[] x1y1) {
                 this.x1y1 = x1y1;
             }
+
+            public Matrix2x1(double x1, double y1) : this(new double[] { x1, y1 }) { }
 
             public double GetX1() {
                 return x1y1[0];
@@ -140,6 +152,25 @@ namespace Myk {
 #endregion
     } // Myk.Lib namespace end
 
+    class Node {
+        private double _output;
+        public double output { get { return _output; } }
+        public double input1 { set; get; }
+        public double input2 { set; get; }
+        public double bias { set; get; }
+        public double weight1 { set; get; }
+        public double weight2 { set; get; }
+
+        private static double Affine(Matrix1x2 x, Matrix2x1 w, double bias) {
+            return x * w + bias;
+        }
+
+        public void run() {
+            var x = new Matrix1x2(input1, input2);
+            var w = new Matrix2x1(weight1, weight2);
+            _output = Affine(x, w, bias);
+        }
+    }
     class Program {
 #region data
         const double E = 2.71828182846;

@@ -203,6 +203,7 @@ namespace Myk {
         // 初期入力(x1, x2)
         static readonly Matrix1x2 paraX1X2 = new Matrix1x2(new double[] { 1D, 1D });
 
+
         /// <summary>
         /// 活性化関数（ステップ関数）
         /// </summary>
@@ -272,6 +273,24 @@ namespace Myk {
         //public static double GradDiscent(double x1, double x2, Func<double, double, double> f) {
         //    (double, double) dX1dX2 = HenBibun(x1, x2, f);
         //}
+
+        /// <summary>
+        /// SoftMax関数
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static double[] SoftMax(double[] x) {
+            double[] answer = new double[x.Length];
+            double bunbo = 0;
+            for (int i = 0; i < x.Length; ++i) {
+                bunbo += Math.Pow(E, x[i]);
+            }
+            for (int i = 0; i < x.Length; ++i) {
+                answer[i] = Math.Pow(E, x[i]) / bunbo;
+            }
+            return answer;
+        }
+
 
         static void Routine(Matrix2x1 weight, double bias, int count) {
             if (0 >= count) return;

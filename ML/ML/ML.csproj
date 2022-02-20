@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,6 +8,7 @@
     <UseWindowsForms>True</UseWindowsForms>
     <StartupObject></StartupObject>
     <RootNamespace>Myk</RootNamespace>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\SG\SG.csproj"

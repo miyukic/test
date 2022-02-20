@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Myk.Lib;
+using System.Runtime.InteropServices;
 
 
 namespace Myk {
@@ -314,6 +315,13 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
+            int ret = NativeMethod.fnMlLib();
+            Console.WriteLine("NativeMethod#fnMlib = " + ret);
+            if (IntPtr.Size == 8) {
+                Console.WriteLine();
+            } else if (IntPtr.Size == 4) {
+                Console.WriteLine();
+            }
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
             //ICollection<int> list = new LinkedList<int>();
@@ -373,4 +381,9 @@ namespace Myk {
     }
 
 } // Myk namespace end
+
+public static class NativeMethod {
+    [DllImport("MlLib.dll")]
+    public static extern int fnMlLib();
+}
 #endif

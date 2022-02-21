@@ -58,7 +58,6 @@ namespace Myk {
         #endregion
     }　// Myk.Util namespace end
     namespace Lib {
-
 #region Matrix
 
         /// <summary>

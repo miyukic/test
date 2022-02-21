@@ -16,6 +16,7 @@ class LIBRARYTEST_API CLibraryTest {
 	std::vector<int> vec = std::vector<int>(10);
 public:
 	CLibraryTest(void);
+	int GetNumber(void);
 	// TODO: メソッドをここに追加します。
 };
 

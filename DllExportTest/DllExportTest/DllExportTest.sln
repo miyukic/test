@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DllExportTest", "DllExportT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibraryTest", "LibraryTest\LibraryTest.vcxproj", "{8E5E4EC5-0CDE-4DF4-9045-BDDD15AD2B42}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestStudy", "UnitTestStudy\UnitTestStudy.vcxproj", "{B65FBBCD-0F43-4F51-967B-A52464A18624}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{8E5E4EC5-0CDE-4DF4-9045-BDDD15AD2B42}.Release|x64.Build.0 = Release|x64
 		{8E5E4EC5-0CDE-4DF4-9045-BDDD15AD2B42}.Release|x86.ActiveCfg = Release|Win32
 		{8E5E4EC5-0CDE-4DF4-9045-BDDD15AD2B42}.Release|x86.Build.0 = Release|Win32
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Debug|x64.ActiveCfg = Debug|x64
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Debug|x64.Build.0 = Debug|x64
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Debug|x86.ActiveCfg = Debug|Win32
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Debug|x86.Build.0 = Debug|Win32
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Release|x64.ActiveCfg = Release|x64
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Release|x64.Build.0 = Release|x64
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Release|x86.ActiveCfg = Release|Win32
+		{B65FBBCD-0F43-4F51-967B-A52464A18624}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

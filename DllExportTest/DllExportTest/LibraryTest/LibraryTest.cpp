@@ -1,4 +1,5 @@
 ﻿// LibraryTest.cpp : DLL 用にエクスポートされる関数を定義します。
+
 //
 
 #include "pch.h"
@@ -10,13 +11,15 @@
 LIBRARYTEST_API int nLibraryTest=0;
 
 // これは、エクスポートされた関数の例です。
-LIBRARYTEST_API int fnLibraryTest(int value)
-{
+LIBRARYTEST_API int fnLibraryTest(int value) {
     return value;
 }
 
 // これは、エクスポートされたクラスのコンストラクターです。
-CLibraryTest::CLibraryTest()
-{
+CLibraryTest::CLibraryTest() {
     return;
+}
+
+int CLibraryTest::GetNumber(void) {
+    return 321;
 }

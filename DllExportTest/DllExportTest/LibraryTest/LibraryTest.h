@@ -9,9 +9,11 @@
 #else
 #define LIBRARYTEST_API __declspec(dllimport)
 #endif
+#include <vector>
 
 // このクラスは dll からエクスポートされました
 class LIBRARYTEST_API CLibraryTest {
+	std::vector<int> vec = std::vector<int>(10);
 public:
 	CLibraryTest(void);
 	// TODO: メソッドをここに追加します。
@@ -19,4 +21,4 @@ public:
 
 extern LIBRARYTEST_API int nLibraryTest;
 
-LIBRARYTEST_API int fnLibraryTest(void);
+LIBRARYTEST_API int fnLibraryTest(int value);

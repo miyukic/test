@@ -6,7 +6,7 @@
 
 int main()
 {
-	auto a = fnLibraryTest();
+	auto a = fnLibraryTest(323);
 	std::cout << "DllEnportTest fnLibraryTest = " << a << std::endl;
 }
 

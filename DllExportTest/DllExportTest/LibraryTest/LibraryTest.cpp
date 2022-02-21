@@ -10,9 +10,9 @@
 LIBRARYTEST_API int nLibraryTest=0;
 
 // これは、エクスポートされた関数の例です。
-LIBRARYTEST_API int fnLibraryTest(void)
+LIBRARYTEST_API int fnLibraryTest(int value)
 {
-    return 32;
+    return value;
 }
 
 // これは、エクスポートされたクラスのコンストラクターです。

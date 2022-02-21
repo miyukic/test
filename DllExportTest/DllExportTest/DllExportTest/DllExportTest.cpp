@@ -1,13 +1,13 @@
 ﻿// DllExportTest.cpp : このファイルには 'main' 関数が含まれています。プログラム実行の開始と終了がそこで行われます。
 //
-#include "../LibraryTest/LibraryTest.h"
-
 #include <iostream>
+#include "../LibraryTest/LibraryTest.h"
 
 int main()
 {
 	auto a = fnLibraryTest(323);
 	std::cout << "DllEnportTest fnLibraryTest = " << a << std::endl;
+	CLibraryTest clt(10, 10);
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー

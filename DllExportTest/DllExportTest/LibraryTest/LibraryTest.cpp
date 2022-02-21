@@ -15,11 +15,10 @@ LIBRARYTEST_API int fnLibraryTest(int value) {
     return value;
 }
 
-// これは、エクスポートされたクラスのコンストラクターです。
-CLibraryTest::CLibraryTest() {
-    return;
+CLibraryTest::CLibraryTest(uint32_t ROW, uint32_t CUL) :
+    vec(ROW, std::vector<uint32_t>(CUL, 0))
+{
 }
-
 int CLibraryTest::GetNumber(void) {
     return 321;
 }

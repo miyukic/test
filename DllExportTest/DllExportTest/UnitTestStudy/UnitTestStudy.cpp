@@ -12,7 +12,7 @@ namespace UnitTestStudy
 		
 		TEST_METHOD(TestMethod1)
 		{
-			CLibraryTest st;
+			CLibraryTest st(10, 10);
 			int a = st.GetNumber();
 			Assert::AreEqual(321, a);
 		}

@@ -13,9 +13,12 @@
 
 // このクラスは dll からエクスポートされました
 class LIBRARYTEST_API CLibraryTest {
-	std::vector<int> vec = std::vector<int>(10);
+	std::vector<std::vector<uint32_t>> vec;
 public:
-	CLibraryTest(void);
+	// これは、エクスポートされたクラスのコンストラクターです。
+	// コンストラクタ
+	CLibraryTest(uint32_t, uint32_t);
+
 	int GetNumber(void);
 	// TODO: メソッドをここに追加します。
 };

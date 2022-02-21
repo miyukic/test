@@ -15,6 +15,14 @@
 namespace myk {
 	namespace lib {
 
+		class MLLIB_API Hoge {
+		public:
+			Hoge() {}
+			void HogeMethod() {
+
+			}
+		};
+
 		class MLLIB_API Matrix {
 			std::vector<std::vector<double>> matrix;
 		public:

@@ -51,12 +51,6 @@ namespace myk {
 			Matrix(Matrix && from);
 
 			/// <summary>
-			/// vectorで受け取ります
-			/// </summary>
-			/// <param name="mtrix"></param>
-			Matrix(const std::vector<double>&& mtrix);
-
-			/// <summary>
 			/// 行と列を指定してその要素の参照を返します。
 			/// ※注意 インデックスは0始まりです。
 			/// </summary>
@@ -78,9 +72,11 @@ namespace myk {
 
 		};
 
-		extern "C" MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+		MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 	}
 }
+
+MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,7 +92,6 @@ extern "C" {
 
 
 	MLLIB_API int fnMlLib(void);
-	MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
 
 
 #ifdef __cplusplus

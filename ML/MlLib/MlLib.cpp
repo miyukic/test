@@ -6,38 +6,33 @@
 #include "MlLib.h"
 #include <vector>
 #include <string>
+#include <iostream>
 
 
 #pragma region cpp 
 namespace myk::lib {
 #pragma region Matrixクラスの実装
 
-	/// <summary>
-	/// 行と列を指定して行列オブジェクトを生成します。
-	/// </summary>
-	/// <param name="row"></param>
-	/// <param name="cul"></param>
-	Matrix::Matrix(uint32_t row, uint32_t cul) :
-		ROW{ row }, CUL{ cul }, matrix(ROW, std::vector<double>(CUL, 0.0)) { }
+	//コンストラクタ
+	Matrix::Matrix(uint32_t row, uint32_t cul) : Matrix(row, cul, 0.0F) {}
 
-	/// <summary>
-	/// 行と列を指定してその要素の参照を返します。
-	/// ※注意 インデックスは0始まりです。
-	/// </summary>
-	/// <param name="ROW"></param>
-	/// <param name="CUL"></param>
-	/// <returns></returns>
+	//コンストラクタ
+	Matrix::Matrix(uint32_t row, uint32_t cul, double value) :
+		ROW{ row }, CUL{ cul },
+		matrix(row, std::vector<double>(cul, value)) { }
+
+	// vectorをムーブして初期化
+	Matrix::Matrix(const std::vector<double>&& mtrix) : 
+		matrix(matrix), ROW{ matrix.size() }, CUL{ matrix[0].size() } {}
+
+	// ムーブコンストラクタ
+	Matrix::Matrix(Matrix&& from) :
+		ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
+
 	double& Matrix::at(uint32_t ROW, uint32_t CUL) noexcept(false) {
 		return matrix.at(ROW).at(CUL);
 	}
 
-	/// <summary>
-	/// 行と列を指定して値を読みます
-	/// ※注意 インデックスは0始まりです。
-	/// </summary>
-	/// <param name="ROW"></param>
-	/// <param name="CUL"></param>
-	/// <returns></returns>
 	double Matrix::read(uint32_t ROW, uint32_t CUL) const noexcept(false) {
 		return matrix.at(ROW).at(CUL);
 	}
@@ -47,7 +42,8 @@ namespace myk::lib {
 	}
 
 #pragma endregion // Matrixクラス
-		Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+
+	Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
 		using namespace std::literals::string_literals;
 		if (lhs.ROW != rhs.CUL) {
 			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
@@ -86,7 +82,13 @@ namespace myk::lib {
 // これは、エクスポートされた関数の例です。
 int fnMlLib(void)
 {
-    return 256 * 3;
+	std::cout << "fnMlLiv が実行されました" << std::endl;
+	myk::lib::Matrix mtx = myk::lib::Matrix(10, 10);
+    return 100 * 3;
+}
+
+myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
+	return myk::lib::Matrix(ROW, CUL);
 }
 
 

@@ -15,14 +15,6 @@
 namespace myk {
 	namespace lib {
 
-		class MLLIB_API Hoge {
-		public:
-			Hoge() {}
-			void HogeMethod() {
-
-			}
-		};
-
 		class MLLIB_API Matrix {
 			std::vector<std::vector<double>> matrix;
 		public:
@@ -31,10 +23,38 @@ namespace myk {
 
 			/// <summary>
 			/// 行と列を指定して行列オブジェクトを生成します。
+			/// 値はすべて0.0Fになる。
+			/// Matrixクラスのコンストラクタ。
 			/// </summary>
 			/// <param name="row"></param>
 			/// <param name="cul"></param>
 			Matrix(uint32_t row, uint32_t cul);
+
+			/// <summary>
+			/// 行と列とその要素を指定して行列オブジェクトを生成します。
+			/// Matrixのコンストラクタ。
+			/// </summary>
+			/// <param name="row"></param>
+			/// <param name="cul"></param>
+			/// <param name="value"></param>
+			Matrix(uint32_t row, uint32_t cul, double value);
+
+			/// <summary>
+			/// vectorオブジェクトをムーブしてMatrixオブジェクトを生成します。
+			/// Matrixのコンストラクタ。
+			/// </summary>
+			Matrix(const std::vector<double>&& mtrix);
+
+			/// <summary>
+			/// Matrixのムーブコンストラクタ
+			/// </summary>
+			Matrix(Matrix && from);
+
+			/// <summary>
+			/// vectorで受け取ります
+			/// </summary>
+			/// <param name="mtrix"></param>
+			Matrix(const std::vector<double>&& mtrix);
 
 			/// <summary>
 			/// 行と列を指定してその要素の参照を返します。
@@ -58,7 +78,7 @@ namespace myk {
 
 		};
 
-		MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+		extern "C" MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 	}
 }
 
@@ -76,6 +96,8 @@ extern "C" {
 
 
 	MLLIB_API int fnMlLib(void);
+	MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
+
 
 #ifdef __cplusplus
 }

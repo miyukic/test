@@ -73,6 +73,8 @@ namespace myk {
 		};
 
 		MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+		MLLIB_API Matrix&& operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 	}
 }
 
@@ -81,16 +83,8 @@ MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
 #ifdef __cplusplus
 extern "C" {
 #endif
-	// このクラスは dll からエクスポートされました
-	//class MLLIB_API CMlLib {
-	//public:
-	//	CMlLib(void);
-	//	// TODO: メソッドをここに追加します。
-	//};
-
 	//extern MLLIB_API int nMlLib;
-
-
+	//C#側
 	MLLIB_API int fnMlLib(void);
 
 

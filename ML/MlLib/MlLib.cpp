@@ -66,17 +66,28 @@ namespace myk::lib {
 		return std::move(Multiply(lhs, rhs));
 	}
 
-} //namespace end myk::lib
+	bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+		//shapeチェック
+		if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
+		for (size_t i = 0; i < lhs.CUL; ++i) {
+			for (size_t j = 0; j < lhs.ROW; ++j) {
+				//全要素チェック
+				if (lhs.read(i, j) != rhs.read(i, j)) return false;
+			}
+		}
+		return true;
+	}
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="lhs"></param>
-/// <param name="rhs"></param>
-/// <returns></returns>
+} //namespace end myk::lib
 
 #pragma endregion
 
+
+myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
+	return myk::lib::Matrix(ROW, CUL);
+}
+
+#pragma region C#向けに公開
 
 // これは、エクスポートされた変数の例です
 //MLLIB_API int nMlLib=0;
@@ -88,14 +99,5 @@ int fnMlLib(void)
 	myk::lib::Matrix mtx = myk::lib::Matrix(10, 10);
     return 100 * 3;
 }
+#pragma endregion
 
-myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
-	return myk::lib::Matrix(ROW, CUL);
-}
-
-
-// これは、エクスポートされたクラスのコンストラクターです。
-//CMlLib::CMlLib()
-//{
-//    return;
-//}

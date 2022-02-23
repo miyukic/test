@@ -45,25 +45,27 @@ namespace myk::lib {
 
 	Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
 		using namespace std::literals::string_literals;
-		if (lhs.ROW != rhs.CUL) {
+		if (lhs.CUL != rhs.ROW) {
 			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
 				+ "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
 				+ "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
 		}
-		Matrix newMatr(rhs.ROW, lhs.CUL);
-		for (size_t i = 0; i < rhs.ROW; ++i) {
-			for (size_t j = 0; j < lhs.CUL; ++j) {
-				//for ()
-				//	newMatr.at(i, j)
+		Matrix newMatr(rhs.CUL, lhs.ROW);
+		for (size_t i = 0; i < rhs.CUL; ++i) {
+			for (size_t j = 0; j < lhs.ROW; ++j) {
 				//	newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
-				newMatr.at(1, 0) = lhs.read(1, 0) * rhs.read(0, 0) + lhs.read(1, 1) * rhs.read(1, 0);
-
-				newMatr.at(0, 1) = lhs.read(0, 0) * rhs.read(0, 1) + lhs.read(0, 1) * rhs.read(1, 1);
-				newMatr.at(1, 1) = lhs.read(1, 0) * rhs.read(0, 1) + lhs.read(1, 1) * rhs.read(1, 1);
+				for (size_t k = 0; k < lhs.CUL; ++k) {
+					newMatr.at(i, j) += lhs.read(i, k) * rhs.read(k, j);
+				}
 			}
 		}
 		return newMatr;
 	}
+
+	Matrix&& operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+		return std::move(Multiply(lhs, rhs));
+	}
+
 } //namespace end myk::lib
 
 /// <summary>

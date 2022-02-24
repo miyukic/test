@@ -28,13 +28,19 @@ namespace UnitTestMiLib
 
 		TEST_METHOD(否定！＝演算子) {
 			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
-			//ToDo
+			Assert::AreEqual(false, mtx1 != mtx1);
 		}
 
 		TEST_METHOD(Multiply関数) {
 			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
-			Matrix mtx2({ {3, 2, 5}, {2, 4, 5} });
+			Matrix mtx2({ {3, 2, 5}, {2, 4, 5}, {2, 2, 2} });
+			Matrix answer({ {23,24,35},{24,30.40} });
+			Matrix mtx12 = multiply(mtx1, mtx2);
+			//Matrix mtx12 = mtx1 * mtx2;
+			bool result = mtx12 == answer;
+			Assert::AreEqual(true, result);
 		}
+
 
 		TEST_METHOD(テスト2) {
 		}

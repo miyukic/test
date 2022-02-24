@@ -55,7 +55,7 @@ namespace myk {
 			/// <summary>
 			/// Matrixのムーブコンストラクタ
 			/// </summary>
-			Matrix(Matrix && from);
+			Matrix(Matrix && from) noexcept;
 
 			/// <summary>
 			/// 行と列を指定してその要素の参照を返します。

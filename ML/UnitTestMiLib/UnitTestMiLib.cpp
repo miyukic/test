@@ -22,12 +22,18 @@ namespace UnitTestMiLib
 			Assert::AreEqual(true, result);
 			//異なる場合のチェック
 			Matrix mtx3{ vec2 };
-			bool result = (mtx1 == mtx3);
-			Assert::AreEqual(false, result);
+			bool result2 = (mtx1 == mtx3);
+			Assert::AreEqual(false, result2);
+		}
+
+		TEST_METHOD(否定！＝演算子) {
+			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
+			//ToDo
 		}
 
 		TEST_METHOD(Multiply関数) {
-			Matrix mtx(10, 10);
+			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
+			Matrix mtx2({ {3, 2, 5}, {2, 4, 5} });
 		}
 
 		TEST_METHOD(テスト2) {

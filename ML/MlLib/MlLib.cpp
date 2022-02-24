@@ -31,7 +31,7 @@ namespace myk::lib {
 		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
 
 	// ムーブコンストラクタ
-	Matrix::Matrix(Matrix&& from) :
+	Matrix::Matrix(Matrix&& from) noexcept :
 		ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
 
 	double& Matrix::at(uint32_t ROW, uint32_t CUL) noexcept(false) {

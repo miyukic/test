@@ -57,6 +57,7 @@ namespace myk {
 			/// </summary>
 			Matrix(Matrix && from) noexcept;
 
+
 			/// <summary>
 			/// 行と列を指定してその要素の参照を返します。
 			/// ※注意 インデックスは0始まりです。
@@ -76,11 +77,10 @@ namespace myk {
 			double read(uint32_t ROW, uint32_t CUL) const noexcept(false);
 
 			uint32_t test();
-
 		};
 
-		MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
-		MLLIB_API Matrix&& operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+		MLLIB_API Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+		MLLIB_API Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 
 		/// <summary>

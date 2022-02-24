@@ -14,10 +14,10 @@
 namespace myk::lib {
 #pragma region Matrixクラスの実装
 
-	//コンストラクタ
+	// コンストラクタ
 	Matrix::Matrix(uint32_t row, uint32_t cul) : Matrix(row, cul, 0.0F) {}
 
-	//コンストラクタ
+	// コンストラクタ
 	Matrix::Matrix(uint32_t row, uint32_t cul, double value) :
 		ROW{ row }, CUL{ cul },
 		matrix(row, std::vector<double>(cul, value)) { }
@@ -26,7 +26,7 @@ namespace myk::lib {
 	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) : 
 		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
 
-	//vectorを参照して初期化するコンストラクタ
+	// vectorを参照して初期化するコンストラクタ
 	Matrix::Matrix(const std::vector<std::vector<double>>& matrix) : 
 		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
 
@@ -52,7 +52,7 @@ namespace myk::lib {
 
 #pragma endregion // Matrixクラス
 
-	Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+	Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
 		using namespace std::literals::string_literals;
 		if (lhs.CUL != rhs.ROW) {
 			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
@@ -71,8 +71,8 @@ namespace myk::lib {
 		return newMatr;
 	}
 
-	Matrix&& operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-		return std::move(Multiply(lhs, rhs));
+	Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+		return multiply(lhs, rhs);
 	}
 
 	bool operator==(const Matrix& lhs, const Matrix& rhs) {

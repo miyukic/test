@@ -83,7 +83,6 @@ namespace myk {
 		MLLIB_API Matrix&& operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 
-		
 		/// <summary>
 		/// operator==が定義されているすべての型にoperator!=が自動で定義されます。
 		/// </summary>
@@ -92,12 +91,19 @@ namespace myk {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		template<class T, class F = decltype(!(std::declval<T>() == std::declval<T>()))>
-		F operator!=(T a, T b) {
-			return !(a == b);
+		//template<class T, class F = decltype(!(std::declval<T>() == std::declval<T>()))>
+		//F operator!=(T a, T b) {
+		//	return !(a == b);
+		//}
+
+		// テンプレートが使えないので暫定コード
+		MLLIB_API inline bool operator!=(const Matrix& lhs, const Matrix& rhs) {
+			return !(lhs == rhs);
 		}
+		
 	}
 }
+
 
 MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
 

@@ -39,7 +39,11 @@ namespace myk::lib {
 	}
 
 	double Matrix::read(uint32_t ROW, uint32_t CUL) const noexcept(false) {
-		return matrix.at(ROW).at(CUL);
+		try {
+			return matrix.at(ROW).at(CUL);
+		} catch (std::out_of_range& e) {
+			std::cerr << "Matrix::read で例外が発生しました:" << e.what() << std::endl;
+		}
 	}
 
 	uint32_t Matrix::test() {
@@ -74,14 +78,16 @@ namespace myk::lib {
 	bool operator==(const Matrix& lhs, const Matrix& rhs) {
 		//shapeチェック
 		if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
-		for (size_t i = 0; i < lhs.CUL; ++i) {
-			for (size_t j = 0; j < lhs.ROW; ++j) {
+		for (size_t i = 0; i < lhs.ROW; ++i) {
+			for (size_t j = 0; j < lhs.CUL; ++j) {
 				//全要素チェック
 				try {
-					if (lhs.read(i, j) 
-						!= rhs.read(i, j)) return false;
-				} catch(...) {
-					std::cout << "operator==で例外が発生しました。";
+					if (lhs.read(i, j) != rhs.read(i, j)) return false;
+				} catch(std::out_of_range& e) {
+					std::cerr << 
+						"operator==(const Matrix&, const Matrix&)で例外が発生しました。:" <<
+						e.what() << std::endl;
+					//return false;
 				}
 			}
 		}
@@ -103,8 +109,7 @@ myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
 //MLLIB_API int nMlLib=0;
 
 // これは、エクスポートされた関数の例です。
-int fnMlLib(void)
-{
+int fnMlLib(void) {
 	std::cout << "fnMlLiv が実行されました" << std::endl;
     return 100 * 3;
 }

@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <initializer_list>
 
 
 #pragma region cpp 
@@ -21,9 +22,13 @@ namespace myk::lib {
 		ROW{ row }, CUL{ cul },
 		matrix(row, std::vector<double>(cul, value)) { }
 
-	// vectorをムーブして初期化
-	Matrix::Matrix(const std::vector<double>&& mtrix) : 
-		matrix(matrix), ROW{ matrix.size() }, CUL{ matrix[0].size() } {}
+	// vectorをムーブして初期化するコンストラクタ
+	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) : 
+		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
+
+	//vectorを参照して初期化するコンストラクタ
+	Matrix::Matrix(const std::vector<std::vector<double>>& matrix) : 
+		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
 
 	// ムーブコンストラクタ
 	Matrix::Matrix(Matrix&& from) :
@@ -66,13 +71,18 @@ namespace myk::lib {
 		return std::move(Multiply(lhs, rhs));
 	}
 
-	bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+	bool operator==(const Matrix& lhs, const Matrix& rhs) {
 		//shapeチェック
 		if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
 		for (size_t i = 0; i < lhs.CUL; ++i) {
 			for (size_t j = 0; j < lhs.ROW; ++j) {
 				//全要素チェック
-				if (lhs.read(i, j) != rhs.read(i, j)) return false;
+				try {
+					if (lhs.read(i, j) 
+						!= rhs.read(i, j)) return false;
+				} catch(...) {
+					std::cout << "operator==で例外が発生しました。";
+				}
 			}
 		}
 		return true;
@@ -87,7 +97,7 @@ myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
 	return myk::lib::Matrix(ROW, CUL);
 }
 
-#pragma region C#向けに公開
+#pragma region CS向けに公開
 
 // これは、エクスポートされた変数の例です
 //MLLIB_API int nMlLib=0;
@@ -96,7 +106,6 @@ myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
 int fnMlLib(void)
 {
 	std::cout << "fnMlLiv が実行されました" << std::endl;
-	myk::lib::Matrix mtx = myk::lib::Matrix(10, 10);
     return 100 * 3;
 }
 #pragma endregion

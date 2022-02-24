@@ -11,6 +11,7 @@
 #endif
 #pragma once
 #include <vector>
+#include <initializer_list>
 
 namespace myk {
 	namespace lib {
@@ -43,7 +44,13 @@ namespace myk {
 			/// vectorオブジェクトをムーブしてMatrixオブジェクトを生成します。
 			/// Matrixのコンストラクタ。
 			/// </summary>
-			Matrix(const std::vector<double>&& mtrix);
+			Matrix(const std::vector<std::vector<double>>&& mtrix);
+
+			/// <summary>
+			/// vectorオブジェクトを参照してMatrixオブジェクトを生成します。
+			/// Matrixのコンストラクタ。
+			/// </summary>
+			Matrix(const std::vector<std::vector<double>>& mtrix);
 
 			/// <summary>
 			/// Matrixのムーブコンストラクタ
@@ -75,6 +82,20 @@ namespace myk {
 		MLLIB_API Matrix Multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 		MLLIB_API Matrix&& operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+
+		
+		/// <summary>
+		/// operator==が定義されているすべての型にoperator!=が自動で定義されます。
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="F"></typeparam>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		template<class T, class F = decltype(!(std::declval<T>() == std::declval<T>()))>
+		F operator!=(T a, T b) {
+			return !(a == b);
+		}
 	}
 }
 

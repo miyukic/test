@@ -28,7 +28,7 @@ namespace myk::lib {
 		matrix(row, std::vector<double>(cul, value)) { }
 
 	// vectorをムーブして初期化するコンストラクタ
-	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) : 
+	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) :
 		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
 		// 妥協の産物...ジャグ配列を禁止にしたい
 		// テンプレートを使わずに二次元目の要素数を固定する方法
@@ -39,6 +39,18 @@ namespace myk::lib {
 	Matrix::Matrix(const std::vector<std::vector<double>>& matrix) : 
 		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
 		checkMatrixCULSize();
+	}
+
+	// vectorをムーブして初期化するコンストラクタ(ジャグ配列チェックしない場合はtrue)
+	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix, bool unCheckJaddedArray) : 
+		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+		if (!unCheckJaddedArray) checkMatrixCULSize();
+	}
+
+	// vectorを参照して初期化するコンストラクタ(ジャグ配列チェックをしない場合はtrue)
+	Matrix::Matrix(const std::vector<std::vector<double>>& matrix, bool unCheckJaddedArray) : 
+		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+		if (!unCheckJaddedArray) checkMatrixCULSize();
 	}
 
 	// ムーブコンストラクタ
@@ -60,6 +72,7 @@ namespace myk::lib {
 		}
 	}
 
+	// Matrixの内容を出力する
 	std::string Matrix::print() {
 //#ifdef _MSC_VER
 		//const WCHAR hazime= '{ ';

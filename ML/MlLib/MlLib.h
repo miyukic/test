@@ -54,6 +54,20 @@ namespace myk {
 			Matrix(const std::vector<std::vector<double>>& mtrix);
 
 			/// <summary>
+			/// vectorをムーブして初期化するコンストラクタ。
+			/// </summary>
+			/// <param name="matrix"></param>
+			/// <param name="unCheckJaddedArray">ジャグ配列チェックをしない場合は true </param>
+			Matrix(const std::vector<std::vector<double>>&& matrix, bool unCheckJaddedArray);
+
+			/// <summary>
+			/// vectorを参照して初期化するコンストラクタ。
+			/// </summary>
+			/// <param name="matrix"></param>
+			/// <param name="unCheckJaddedArray">ジャグ配列チェックをしない</param>
+			Matrix(const std::vector<std::vector<double>>& matrix, bool unCheckJaddedArray);
+
+			/// <summary>
 			/// Matrixのムーブコンストラクタ
 			/// </summary>
 			Matrix(Matrix && from) noexcept;

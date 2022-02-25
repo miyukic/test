@@ -192,14 +192,16 @@ namespace myk::lib {
 
 } //namespace end myk::lib
 
-#pragma endregion
-
-
 myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
 	return myk::lib::Matrix(ROW, CUL);
 }
 
-#pragma region CS向けに公開
+#pragma endregion
+
+
+
+
+#pragma region FFI API
 
 // これは、エクスポートされた変数の例です
 //MLLIB_API int nMlLib=0;
@@ -208,5 +210,13 @@ myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
 int fnMlLib(void) {
 	std::cout << "fnMlLiv が実行されました" << std::endl;
     return 100 * 3;
+}
+
+int createNativeMatrix(uint32_t ROW, uint32_t CUL, double value) {
+	return 0;
+}
+
+int initializeNativeMatrix(double* arr, int len) {
+	return 0;
 }
 #pragma endregion

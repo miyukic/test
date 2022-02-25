@@ -59,6 +59,37 @@ namespace Myk {
     }　// Myk.Util namespace end
     namespace Lib {
 #region Matrix
+        // C++で実装された汎用行列クラス
+        class CMatrix {
+            public uint ROW { get; }
+            public uint CUL { get; }
+            public CMatrix(uint ROW, uint CUL, double value = 0.0) {
+                this.ROW = ROW;
+                this.CUL = CUL;
+                createNativeMatrix();
+            }
+            private static (System.IntPtr, int) createNativeArray(double[] array) {
+                int length = array.Length;
+
+                // 確保する配列のメモリサイズ（double型 × 長さ）  
+                int size = Marshal.SizeOf(typeof(double)) * length;
+
+                // C++に渡す配列のアンマネージドメモリを確保  
+                // ※「ptr」は確保したメモリのポインタ  
+                System.IntPtr ptr = Marshal.AllocCoTaskMem(size);
+
+                // C#の配列をアンマネージドメモリにコピーする  
+                Marshal.Copy(array, 0, ptr, length);
+
+                // C++に配列を渡す(ポインタを渡す)  
+                return (ptr, length);
+
+                // アンマネージドのメモリを解放  
+                //Marshal.FreeCoTaskMem(ptr);
+            }
+            [DllImport("MlLib.dll")]
+            public static extern int createNativeMatrix();
+        }
 
         /// <summary>
         ///  MatrixClass
@@ -152,6 +183,7 @@ namespace Myk {
 #endregion
     } // Myk.Lib namespace end
 
+    // ノードを表すクラス。h
     class Node {
         private double _output;
         public double output { get { return _output; } }
@@ -314,13 +346,7 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
-            int ret = NativeMethod.fnMlLib();
-            Console.WriteLine("NativeMethod#fnMlib = " + ret);
-            if (IntPtr.Size == 8) {
-                Console.WriteLine();
-            } else if (IntPtr.Size == 4) {
-                Console.WriteLine();
-            }
+
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
             //ICollection<int> list = new LinkedList<int>();

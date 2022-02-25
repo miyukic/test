@@ -31,8 +31,7 @@ namespace UnitTestMiLib
 			Assert::AreEqual(false, mtx1 != mtx1);
 		}
 
-		TEST_METHOD(Multiply関数) {
-			Logger::WriteMessage("test");
+		TEST_METHOD(multiply関数) {
 			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
 			Matrix mtx2({ {3, 2, 5}, {2, 4, 5}, {2, 2, 2} });
 			Matrix answer({ {23, 24, 35}, {24, 30, 40} });
@@ -46,8 +45,23 @@ namespace UnitTestMiLib
 			Assert::AreEqual(true, result);
 		}
 
+		TEST_METHOD(multiply関数スカラー倍) {
+			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
+			double a = 12.4;
+			Matrix mtx2 = multiply(mtx1, a);
+			Matrix answer({ {37.2, 24.8, 62}, {24.8, 4 * 12.4, 12.4 * 5} });
+			bool result = mtx2 == answer;
+			Assert::AreEqual(true, result);
+		}
 
-		TEST_METHOD(テスト2) {
+
+		TEST_METHOD(add関数1) {
+			Matrix mtx1({ {3, 12.3, 5}, {2, 4.3, 5}, {4, 12, 123 } });
+			double a = 12;
+			Matrix mtx2 = add(mtx1, a);
+			Matrix answer({ {3.0 + a, 12.3 + a , 5.0 + a}, {2.0 + a, 4.3 + a, 5.0 + a},{4.0+a, 12.0+a, 123.0+a} });
+			bool result = answer == mtx2;
+			Assert::AreEqual(true, result);
 		}
 
 	};

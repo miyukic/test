@@ -16,7 +16,11 @@ namespace myk::lib {
 #pragma region Matrixクラスの実装
 
 	// コンストラクタ
-	Matrix::Matrix(uint32_t row, uint32_t cul) : Matrix(row, cul, 0.0F) {}
+	// 要素は初期化しない
+	//Matrix::Matrix(uint32_t row, uint32_t cul) : Matrix(row, cul, 0.0F) {}
+	Matrix::Matrix(uint32_t row, uint32_t cul) :
+		ROW{ row }, CUL{ cul }, matrix(row, std::vector<double>(cul))
+	{}
 
 	// コンストラクタ
 	Matrix::Matrix(uint32_t row, uint32_t cul, double value) :
@@ -26,8 +30,8 @@ namespace myk::lib {
 	// vectorをムーブして初期化するコンストラクタ
 	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) : 
 		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
-		//妥協の産物...ジャグ配列を禁止にしたい
-		//テンプレートを使わずに二次元目の要素数を固定する方法
+		// 妥協の産物...ジャグ配列を禁止にしたい
+		// テンプレートを使わずに二次元目の要素数を固定する方法
 		checkMatrixCULSize();
 	}
 
@@ -41,10 +45,12 @@ namespace myk::lib {
 	Matrix::Matrix(Matrix&& from) noexcept :
 		ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
 
+	// 行と列を指定してその要素の参照を取得（変更可）
 	double& Matrix::at(uint32_t ROW, uint32_t CUL) noexcept(false) {
 		return matrix.at(ROW).at(CUL);
 	}
 
+	// 行と列を指定してその要素の値を取得（変更不可）
 	double Matrix::read(uint32_t ROW, uint32_t CUL) const noexcept(false) {
 		try {
 			return matrix.at(ROW).at(CUL);
@@ -92,11 +98,13 @@ namespace myk::lib {
 	}
 
 	uint32_t Matrix::test() {
-		return 321;
+		return 321 * 42 + 12 * 3;
 	}
 
 #pragma endregion // Matrixクラス
 
+#pragma region myk::libのグローバル関数
+	// 行列積
 	Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
 		using namespace std::literals::string_literals;
 		if (lhs.CUL != rhs.ROW) {
@@ -114,6 +122,35 @@ namespace myk::lib {
 			}
 		}
 		return newMatr;
+	}
+
+	// 行列スカラー倍
+	Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
+		Matrix newMatrix(lhs.ROW, lhs.CUL);
+		auto r = lhs.ROW;
+		auto c = lhs.CUL;
+		for (size_t i = 0; i < lhs.ROW; ++i) {
+			for (size_t j = 0; j < lhs.CUL; ++j) {
+				try {
+					newMatrix.at(i, j)
+						= lhs.read(i, j) * rhs;
+				} catch (std::out_of_range& e) {
+					std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
+				}
+			}
+		}
+		return newMatrix;
+	}
+
+	// 行列各要素に加算する
+	Matrix add(const Matrix& lhs, double rhs) noexcept(false) {
+		Matrix newMatrix(lhs.ROW, lhs.CUL);
+		for (size_t i = 0; i < lhs.ROW; ++i) {
+			for (size_t j = 0; j < lhs.CUL; ++j) {
+				newMatrix.at(i, j) = lhs.read(i, j) + rhs;
+			}
+		}
+		return newMatrix;
 	}
 
 	Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
@@ -138,6 +175,7 @@ namespace myk::lib {
 		}
 		return true;
 	}
+#pragma endregion //myk::libのグローバル関数
 
 } //namespace end myk::lib
 

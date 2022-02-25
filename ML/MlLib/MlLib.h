@@ -85,11 +85,36 @@ namespace myk {
 
 			uint32_t test();
 		private:
+			 
 			bool checkMatrixCULSize() noexcept(false);
 		};
 
+		/// <summary>
+		/// 行列積
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns></returns>
 		MLLIB_API Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+
+		/// <summary>
+		/// 行列をスカラー倍
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns></returns>
+		MLLIB_API Matrix multiply(const Matrix& lhs, double rhs) noexcept(false);
+
+		/// <summary>
+		/// 行列各要素にadd
+		/// </summary>
+		/// <param name="lhs"></param>
+		/// <param name="rhs"></param>
+		/// <returns></returns>
+		MLLIB_API Matrix add(const Matrix& lhs, double rhs) noexcept(false);
+
 		MLLIB_API Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+
 		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 
 		/// <summary>

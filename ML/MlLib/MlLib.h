@@ -12,6 +12,7 @@
 #pragma once
 #include <vector>
 #include <initializer_list>
+#include <string>
 
 namespace myk {
 	namespace lib {
@@ -76,7 +77,15 @@ namespace myk {
 			/// <returns></returns>
 			double read(uint32_t ROW, uint32_t CUL) const noexcept(false);
 
+			/// <summary>
+			/// Matrix の内容を標準出力に出力します。
+			/// </summary>
+			/// <returns>出力の内容を返します。</returns>
+			std::string print();
+
 			uint32_t test();
+		private:
+			bool checkMatrixCULSize() noexcept(false);
 		};
 
 		MLLIB_API Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);

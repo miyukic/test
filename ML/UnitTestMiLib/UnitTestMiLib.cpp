@@ -32,12 +32,17 @@ namespace UnitTestMiLib
 		}
 
 		TEST_METHOD(Multiplyä÷êî) {
+			Logger::WriteMessage("test");
 			Matrix mtx1({ {3, 2, 5}, {2, 4, 5} });
 			Matrix mtx2({ {3, 2, 5}, {2, 4, 5}, {2, 2, 2} });
-			Matrix answer({ {23,24,35},{24,30.40} });
+			Matrix answer({ {23, 24, 35}, {24, 30, 40} });
+
+			Logger::WriteMessage(answer.print().c_str());
 			Matrix mtx12 = multiply(mtx1, mtx2);
 			//Matrix mtx12 = mtx1 * mtx2;
+			Logger::WriteMessage(mtx12.print().c_str());
 			bool result = mtx12 == answer;
+
 			Assert::AreEqual(true, result);
 		}
 

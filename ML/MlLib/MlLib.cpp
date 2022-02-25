@@ -6,6 +6,7 @@
 #include "MlLib.h"
 #include <vector>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <initializer_list>
 
@@ -24,11 +25,17 @@ namespace myk::lib {
 
 	// vectorをムーブして初期化するコンストラクタ
 	Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) : 
-		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
+		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+		//妥協の産物...ジャグ配列を禁止にしたい
+		//テンプレートを使わずに二次元目の要素数を固定する方法
+		checkMatrixCULSize();
+	}
 
 	// vectorを参照して初期化するコンストラクタ
 	Matrix::Matrix(const std::vector<std::vector<double>>& matrix) : 
-		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {}
+		matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+		checkMatrixCULSize();
+	}
 
 	// ムーブコンストラクタ
 	Matrix::Matrix(Matrix&& from) noexcept :
@@ -43,6 +50,44 @@ namespace myk::lib {
 			return matrix.at(ROW).at(CUL);
 		} catch (std::out_of_range& e) {
 			std::cerr << "Matrix::read で例外が発生しました:" << e.what() << std::endl;
+			return 0;
+		}
+	}
+
+	std::string Matrix::print() {
+//#ifdef _MSC_VER
+		//const WCHAR hazime= '{ ';
+		//const WCHAR owari = ' }';
+//#else
+//#if __cplusplus > 
+		const char* hazime	= "{";
+		const char* owari	= "}";
+		const char* margin	= " ";
+//#endif
+		static constexpr uint8_t CAP = 6 * 10;
+		std::stringstream sst;
+		sst		<< "\n"
+				<< "――――――――――――\n"
+				<< "行数: " << ROW << "\n"
+				<< "列数: " << CUL << "\n"
+				<< "――――――――――――\n";
+		sst << hazime << "\n";
+		for (std::vector<double> vec : matrix) {
+			sst << "\t" << hazime << margin;
+			for (size_t i = 0; i < vec.size(); ++i) {
+				sst << vec.at(i);
+				if (i != (vec.size() - 1)) sst << ", ";
+			}
+			sst << margin << owari << "\n";
+		}
+		sst << owari << std::endl;
+		std::cout << sst.str();
+		return sst.str();
+	}
+
+	bool Matrix::checkMatrixCULSize() noexcept(false) {
+		for (size_t i = 0; i < matrix.size(); ++i) {
+			if (matrix.at(i).size() != CUL) throw "Matrixの列サイズが一致していません。";
 		}
 	}
 
@@ -59,12 +104,12 @@ namespace myk::lib {
 				+ "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
 				+ "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
 		}
-		Matrix newMatr(rhs.CUL, lhs.ROW);
-		for (size_t i = 0; i < rhs.CUL; ++i) {
-			for (size_t j = 0; j < lhs.ROW; ++j) {
+		Matrix newMatr(lhs.ROW, rhs.CUL);
+		for (size_t r = 0; r < lhs.ROW; ++r) {
+			for (size_t c = 0; c < rhs.CUL; ++c) {
 				//	newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
 				for (size_t k = 0; k < lhs.CUL; ++k) {
-					newMatr.at(i, j) += lhs.read(i, k) * rhs.read(k, j);
+					newMatr.at(r, c) += lhs.read(r, k) * rhs.read(k, c);
 				}
 			}
 		}
@@ -114,4 +159,3 @@ int fnMlLib(void) {
     return 100 * 3;
 }
 #pragma endregion
-

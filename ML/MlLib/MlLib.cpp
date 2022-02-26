@@ -1,6 +1,5 @@
 ﻿// MlLib.cpp : DLL 用にエクスポートされる関数を定義します。
 //
-
 #include "pch.h"
 #include "framework.h"
 #include "MlLib.h"
@@ -9,6 +8,13 @@
 #include <sstream>
 #include <iostream>
 #include <initializer_list>
+#include <memory>
+#include <algorithm>
+
+#ifndef DBG
+#define DBG(...)\
+std::cout << #__VA_ARGS__ << " = " << [&](){ return __VA_ARGS__; }() << std::endl;
+#endif
 
 
 #pragma region cpp 
@@ -106,8 +112,12 @@ namespace myk::lib {
 
 	bool Matrix::checkMatrixCULSize() noexcept(false) {
 		for (size_t i = 0; i < matrix.size(); ++i) {
-			if (matrix.at(i).size() != CUL) throw "Matrixの列サイズが一致していません。";
+			if (matrix.at(i).size() != CUL) {
+				throw "Matrixの列サイズが一致していません。";
+				return false;
+			}
 		}
+		return true;
 	}
 
 	uint32_t Matrix::test() {
@@ -191,8 +201,96 @@ namespace myk::lib {
 #pragma endregion //myk::libのグローバル関数
 
 } //namespace end myk::lib
+namespace myk {
+	using namespace lib;
+	using UPtrMtx = std::unique_ptr<lib::Matrix>;
+	using ID = uint16_t;
 
-myk::lib::Matrix GetMatrix(uint32_t ROW, uint32_t CUL) {
+	/// <summary>
+	/// MatrixオブジェクトをIDと紐づけて管理するクラス。
+	/// MatrinxオブジェクトにアクセスするときはIDが必要。(デリート、取得など）
+	/// Singleton クラス なので ManageMTXObj& getIncetance() で取得。
+	/// </summary>
+	class ManageMTXObj {
+		std::vector<ID> _deletedNum;
+		std::vector<UPtrMtx> _mtxList;
+		static constexpr uint16_t _MATRIX_QUANTITY = 0x0080;
+		static ManageMTXObj _instance;
+
+	public:
+		/// <summary>
+		/// ManageMTXObj を返す。
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		static ManageMTXObj& getInstance() {
+			return _instance;
+		}
+
+		/// <summary>
+		/// Matrixオブジェクトを登録
+		/// 戻り値は管理用のID
+		/// </summary>
+		ID registMTXObj(UPtrMtx matrix) {
+			if (_deletedNum.size() > 0) {
+				ID id = (ID) _deletedNum.size();
+				_mtxList.at(id) = std::move(matrix);
+				_deletedNum.pop_back();
+				return id;
+			}
+			uint32_t num = _mtxList.size();
+			_mtxList.emplace_back(std::move(matrix));
+			return num;
+		}
+
+		/// <summary>
+		/// IDでMatrixオブジェクトを無効にする。
+		/// </summary>
+		/// <param name=""></param>
+		/// <returns></returns>
+		void invalidMTXObj(ID id) noexcept(true) {
+			auto i = std::find(_deletedNum.begin(), _deletedNum.end(), id);
+			if (i == _deletedNum.end())
+			_deletedNum.emplace_back(id);
+		}
+
+		/// <summary>
+		/// 使っていない不要な行列を削除する。
+		/// 解放に成功したMatrixオブジェクトの個数を返す。
+		/// </summary>
+		uint32_t memoryRelease() {
+			uint32_t c = 0;
+			for (ID id : _deletedNum) {
+				if (id <= _mtxList.size()) {
+					_mtxList.at(id).release();
+					++c;
+				} else {
+					continue;
+				}
+			}
+			return c;
+		}
+
+		/// <summary>
+		/// IDでMatrixオブジェクトを取得
+		/// </summary>
+		UPtrMtx getUPtrMtx(ID id) {
+			return std::move(_mtxList.at(id));
+		}
+
+		ManageMTXObj(const ManageMTXObj&)				= delete;
+		ManageMTXObj& operator=(const ManageMTXObj&)	= delete;
+		ManageMTXObj(ManageMTXObj&&)					= delete;
+		ManageMTXObj& operator=(ManageMTXObj&&)			= delete;
+	private:
+		// コンストラクタ
+		ManageMTXObj() { _mtxList.reserve(_MATRIX_QUANTITY); }
+		~ManageMTXObj() = default;
+	};
+
+}
+
+myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
 	return myk::lib::Matrix(ROW, CUL);
 }
 
@@ -212,11 +310,38 @@ int fnMlLib(void) {
     return 100 * 3;
 }
 
-int createNativeMatrix(uint32_t ROW, uint32_t CUL, double value) {
-	return 0;
-}
-
-int initializeNativeMatrix(double* arr, int len) {
-	return 0;
-}
+// Matrixオブジェクトを生成しidを返す。
+//int createNativeMatrix(int ROW, int CUL, double value) {
+//	DBG(ROW);
+//	DBG(CUL);
+//	DBG(value);
+//	using namespace myk;
+//	auto mtx = std::make_unique<lib::Matrix>(ROW, CUL, value);
+//	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+//	ID id = mmo.registMTXObj(std::move(mtx));
+//	return (int)id;
+//}
+//
+//// idのMatrixオブジェクトを無効にする。
+//void deleteNativeMatrix(int id) {
+//	using namespace myk;
+//	ManageMTXObj& mmo = ManageMTXObj::getInstance();
+//	mmo.invalidMTXObj(id);
+//}
+//
+////不要な行列を削除する
+//int unusedNatMatRelease() {
+//	using namespace myk;
+//	ManageMTXObj& mmo = ManageMTXObj::getInstance();
+//	return mmo.memoryRelease();
+//}
+//
+//int initNativeMatrix(double* arr, int len, int ROW, int CUL) {
+//	//using namespace myk;
+//	//auto mtx = std::make_unique<lib::Matrix>(ROW, CUL, value);
+//	//ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+//	//ID id = mmo.registMTXObj(std::move(mtx));
+//	//return id;
+//	return 0;
+//}
 #pragma endregion

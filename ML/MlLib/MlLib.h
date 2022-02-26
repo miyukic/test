@@ -162,6 +162,14 @@ extern "C" {
 	//C#側
 	MLLIB_API int fnMlLib(void);
 
+	MLLIB_API int createNativeMatrix(int, int, double);
+
+	MLLIB_API void deleteNativeMatrix(int);
+
+	MLLIB_API int unusedNatMatRelease();
+
+	MLLIB_API int initNativeMatrix(double*, int, int, int);
+	
 
 #ifdef __cplusplus
 }

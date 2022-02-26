@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Myk.Lib;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 
 namespace Myk {
@@ -59,16 +60,37 @@ namespace Myk {
     }　// Myk.Util namespace end
     namespace Lib {
 #region Matrix
-        // C++で実装された汎用行列クラス
+        // C++で実装されたMatrixクラスの薄いラッパークラス
         class CMatrix {
             public uint ROW { get; }
             public uint CUL { get; }
+
+            /// <summary>
+            /// 行と列を指定して指定した値で初期化
+            /// </summary>
+            /// <param name="ROW">行</param>
+            /// <param name="CUL">列</param>
+            /// <param name="value"></param>
             public CMatrix(uint ROW, uint CUL, double value = 0.0) {
                 this.ROW = ROW;
                 this.CUL = CUL;
-                createNativeMatrix();
+                //createNativeMatrix();
             }
-            private static (System.IntPtr, int) createNativeArray(double[] array) {
+
+            /// <summary>
+            /// 配列でCMatrixクラスを初期化するコンストラクタ
+            /// </summary>
+            /// <param name="array"></param>
+            public CMatrix(in double[,] array2) {
+                uint row = (uint) array2.GetLength(0);
+                uint cul = (uint) array2.GetLength(1);
+                double[] array = array2.OfType<double>().ToArray();
+                var (pInt, len) = createNativeDoubleArray(array);
+                initNativeMatrix(pInt, len, row, cul);
+                
+            }
+            private static(System.IntPtr, int)createNativeDoubleArray(in double[] array) {
+
                 int length = array.Length;
 
                 // 確保する配列のメモリサイズ（double型 × 長さ）  
@@ -88,7 +110,10 @@ namespace Myk {
                 //Marshal.FreeCoTaskMem(ptr);
             }
             [DllImport("MlLib.dll")]
-            public static extern int createNativeMatrix();
+            public static extern int createNativeMatrix(uint ROW, uint CUL, double value);
+
+            [DllImport("MlLib.dll")]
+            public static extern int initNativeMatrix(System.IntPtr arr, int len, uint row, uint cul);
         }
 
         /// <summary>

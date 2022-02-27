@@ -211,12 +211,6 @@ namespace myk::lib {
 } //namespace end myk::lib
 namespace myk {
 	using namespace lib;
-	using UPtrMtx = std::unique_ptr<lib::Matrix>;
-#ifdef _MSC_VER
-	using ID = WORD;
-#else
-	using ID = utin16_t;
-#endif
 
 	/// <summary>
 	/// MatrixオブジェクトをIDと紐づけて管理するクラス。
@@ -323,7 +317,7 @@ int fnMlLib(void) {
 }
 
 // Matrixオブジェクトを生成しidを返す。
-int createNativeMatrix(int ROW, int CUL, double value) {
+myk::ID createNativeMatrix(uint32_t ROW, uint32_t CUL, double value) {
 	DBG(ROW);
 	DBG(CUL);
 	DBG(value);
@@ -331,24 +325,24 @@ int createNativeMatrix(int ROW, int CUL, double value) {
 	auto mtx = std::make_unique<lib::Matrix>(ROW, CUL, value);
 	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
 	ID id = mmo.registMTXObj(std::move(mtx));
-	return (int)id;
+	return id;
 }
 
 // idのMatrixオブジェクトを無効にする。
-void deleteNativeMatrix(int id) {
+void deleteNativeMatrix(myk::ID id) {
 	using namespace myk;
 	ManageMTXObj& mmo = ManageMTXObj::getInstance();
 	mmo.invalidMTXObj(id);
 }
 
 //不要な行列を削除する
-int unusedNatMatRelease() {
+uint32_t unusedNatMatRelease() {
 	using namespace myk;
 	ManageMTXObj& mmo = ManageMTXObj::getInstance();
 	return mmo.memoryRelease();
 }
 
-int initNativeMatrix(double* arr, int len, int ROW, int CUL) {
+myk::ID initNativeMatrix(double* arr, int len, uint32_t ROW, uint32_t CUL) {
 	using namespace myk;
 	std::vector<std::vector<double>> vec(ROW, std::vector<double>(CUL));
 	for (size_t r = 0; r < ROW; ++r) {

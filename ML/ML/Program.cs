@@ -60,7 +60,7 @@ namespace Myk {
     }　// Myk.Util namespace end
     namespace Lib {
         #region Matrix
-        using ID = UInt16;
+        using ID = System.UInt16;
         // C++で実装されたMatrixクラスの薄いラッパークラス
         class CMatrix {
             public uint ROW { get; }
@@ -90,7 +90,6 @@ namespace Myk {
                 double[] array = array2.OfType<double>().ToArray();
                 var (pInt, len) = createNativeDoubleArray(array);
                 id = initNativeMatrix(pInt, len, row, cul);
-                
             }
             private static(System.IntPtr, int)createNativeDoubleArray(in double[] array) {
 

@@ -17,6 +17,7 @@
 #include <vector>
 #include <initializer_list>
 #include <string>
+#include <memory>
 
 namespace myk {
 	namespace lib {
@@ -154,7 +155,16 @@ namespace myk {
 		}
 		
 	}
-}
+} // myk namespace end
+
+namespace myk {
+	using UPtrMtx = std::unique_ptr<lib::Matrix>;
+#ifdef _MSC_VER
+	using ID = WORD;
+#else
+	using ID = utin16_t;
+#endif
+} // myk namespace end
 
 
 MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
@@ -166,13 +176,42 @@ extern "C" {
 	//C#側
 	MLLIB_API int fnMlLib(void);
 
-	MLLIB_API int createNativeMatrix(int, int, double);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name=""></param>
+	/// <param name=""></param>
+	/// <param name=""></param>
+	/// <returns></returns>
+	MLLIB_API myk::ID createNativeMatrix(uint32_t, uint32_t, double);
 
-	MLLIB_API void deleteNativeMatrix(int);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name=""></param>
+	MLLIB_API void deleteNativeMatrix(myk::ID);
 
-	MLLIB_API int unusedNatMatRelease();
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	MLLIB_API uint32_t unusedNatMatRelease();
 
-	MLLIB_API int initNativeMatrix(double*, int, int, int);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	MLLIB_API uint32_t unusedNatMatRelease();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name=""></param>
+	/// <param name=""></param>
+	/// <param name=""></param>
+	/// <param name=""></param>
+	/// <returns></returns>
+	MLLIB_API myk::ID initNativeMatrix(double*, int, int, int);
 	
 
 #ifdef __cplusplus

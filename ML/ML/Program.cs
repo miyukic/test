@@ -59,11 +59,14 @@ namespace Myk {
         #endregion
     }　// Myk.Util namespace end
     namespace Lib {
-#region Matrix
+        #region Matrix
+        using ID = System.UInt16;
         // C++で実装されたMatrixクラスの薄いラッパークラス
         class CMatrix {
             public uint ROW { get; }
             public uint CUL { get; }
+
+            private ID id;
 
             /// <summary>
             /// 行と列を指定して指定した値で初期化
@@ -86,8 +89,7 @@ namespace Myk {
                 uint cul = (uint) array2.GetLength(1);
                 double[] array = array2.OfType<double>().ToArray();
                 var (pInt, len) = createNativeDoubleArray(array);
-                initNativeMatrix(pInt, len, row, cul);
-                
+                id = initNativeMatrix(pInt, len, row, cul);
             }
             private static(System.IntPtr, int)createNativeDoubleArray(in double[] array) {
 
@@ -110,10 +112,10 @@ namespace Myk {
                 //Marshal.FreeCoTaskMem(ptr);
             }
             [DllImport("MlLib.dll")]
-            public static extern int createNativeMatrix(uint ROW, uint CUL, double value);
+            public static extern ID createNativeMatrix(uint ROW, uint CUL, double value);
 
             [DllImport("MlLib.dll")]
-            public static extern int initNativeMatrix(System.IntPtr arr, int len, uint row, uint cul);
+            public static extern ID initNativeMatrix(System.IntPtr arr, int len, uint row, uint cul);
         }
 
         /// <summary>

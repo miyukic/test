@@ -12,9 +12,17 @@
 #include <algorithm>
 
 #ifndef DBG
+#if _DEBUG
 #define DBG(...)\
 std::cout << #__VA_ARGS__ << " = " << [&](){ return __VA_ARGS__; }() << std::endl;
+#else
+#define DBG(...)
 #endif
+#endif
+#ifndef _2DIMENSIONAL_ARRAY
+#define _2DIMENSIONAL_ARRAY(array, culum_width, x, y) [&]()->double{ return array[(x)*(culum_width) + (y)]; }()
+#endif
+
 
 
 #pragma region cpp 
@@ -203,8 +211,6 @@ namespace myk::lib {
 } //namespace end myk::lib
 namespace myk {
 	using namespace lib;
-	using UPtrMtx = std::unique_ptr<lib::Matrix>;
-	using ID = uint16_t;
 
 	/// <summary>
 	/// MatrixオブジェクトをIDと紐づけて管理するクラス。
@@ -218,6 +224,7 @@ namespace myk {
 		static ManageMTXObj _instance;
 
 	public:
+		inline static int hoge = 0;
 		/// <summary>
 		/// ManageMTXObj を返す。
 		/// </summary>
@@ -288,6 +295,7 @@ namespace myk {
 		~ManageMTXObj() = default;
 	};
 
+	ManageMTXObj ManageMTXObj::_instance;
 }
 
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
@@ -295,8 +303,6 @@ myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
 }
 
 #pragma endregion
-
-
 
 
 #pragma region FFI API
@@ -311,37 +317,43 @@ int fnMlLib(void) {
 }
 
 // Matrixオブジェクトを生成しidを返す。
-//int createNativeMatrix(int ROW, int CUL, double value) {
-//	DBG(ROW);
-//	DBG(CUL);
-//	DBG(value);
-//	using namespace myk;
-//	auto mtx = std::make_unique<lib::Matrix>(ROW, CUL, value);
-//	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
-//	ID id = mmo.registMTXObj(std::move(mtx));
-//	return (int)id;
-//}
-//
-//// idのMatrixオブジェクトを無効にする。
-//void deleteNativeMatrix(int id) {
-//	using namespace myk;
-//	ManageMTXObj& mmo = ManageMTXObj::getInstance();
-//	mmo.invalidMTXObj(id);
-//}
-//
-////不要な行列を削除する
-//int unusedNatMatRelease() {
-//	using namespace myk;
-//	ManageMTXObj& mmo = ManageMTXObj::getInstance();
-//	return mmo.memoryRelease();
-//}
-//
-//int initNativeMatrix(double* arr, int len, int ROW, int CUL) {
-//	//using namespace myk;
-//	//auto mtx = std::make_unique<lib::Matrix>(ROW, CUL, value);
-//	//ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
-//	//ID id = mmo.registMTXObj(std::move(mtx));
-//	//return id;
-//	return 0;
-//}
+myk::ID createNativeMatrix(uint32_t ROW, uint32_t CUL, double value) {
+	DBG(ROW);
+	DBG(CUL);
+	DBG(value);
+	using namespace myk;
+	auto mtx = std::make_unique<lib::Matrix>(ROW, CUL, value);
+	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+	ID id = mmo.registMTXObj(std::move(mtx));
+	return id;
+}
+
+// idのMatrixオブジェクトを無効にする。
+void deleteNativeMatrix(myk::ID id) {
+	using namespace myk;
+	ManageMTXObj& mmo = ManageMTXObj::getInstance();
+	mmo.invalidMTXObj(id);
+}
+
+//不要な行列を削除する
+uint32_t unusedNatMatRelease() {
+	using namespace myk;
+	ManageMTXObj& mmo = ManageMTXObj::getInstance();
+	return mmo.memoryRelease();
+}
+
+myk::ID initNativeMatrix(double* arr, int len, uint32_t ROW, uint32_t CUL) {
+	using namespace myk;
+	std::vector<std::vector<double>> vec(ROW, std::vector<double>(CUL));
+	for (size_t r = 0; r < ROW; ++r) {
+		for (size_t c = 0; c < CUL; ++c) {
+			vec.at(r).at(c) = _2DIMENSIONAL_ARRAY(arr, CUL, r, c);
+		}
+	}
+	auto mtx = std::make_unique<lib::Matrix>(vec);
+	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+	ID id = mmo.registMTXObj(std::move(mtx));
+	return id;
+}
+
 #pragma endregion

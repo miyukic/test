@@ -5,9 +5,13 @@
 // MLLIB_API 関数を DLL からインポートされたと見なすのに対し、この DLL は、このマクロで定義された
 // シンボルをエクスポートされたと見なします。
 #ifdef MLLIB_EXPORTS
-#define MLLIB_API __declspec(dllexport)
+#	define MLLIB_API __declspec(dllexport)
 #else
-#define MLLIB_API __declspec(dllimport)
+#	ifdef _WINDLL
+#		define MLLIB_API __declspec(dllimport)
+#	elif __linux__
+#		define MLLIB_API
+#	endif
 #endif
 #pragma once
 #include <vector>

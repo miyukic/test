@@ -155,6 +155,27 @@ namespace myk::lib {
 		return newMatr;
 	}
 
+	// 行列積
+	myk::UPtrMtx multiply(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false) {
+		using namespace std::literals::string_literals;
+		if (lhs->CUL != rhs->ROW) {
+			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+				+ "左辺 Matrix row = "s + std::to_string(lhs->ROW) + "cul = "s + std::to_string(lhs->CUL)
+				+ "右辺 Matrix row = "s + std::to_string(rhs->ROW) + "cul = "s + std::to_string(rhs->CUL);
+		}
+		std::make_unique<Matrix>(lhs->ROW, rhs->CUL);
+		myk::UPtrMtx newMatr = std::make_unique<Matrix>(lhs->ROW, rhs->CUL);
+		for (size_t r = 0; r < lhs->ROW; ++r) {
+			for (size_t c = 0; c < rhs->CUL; ++c) {
+				//    newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
+				for (size_t k = 0; k < lhs->CUL; ++k) {
+					newMatr->at(r, c) += lhs->read(r, k) * rhs->read(k, c);
+				}
+			}
+		}
+		return newMatr;
+	}
+
 	// 行列スカラー倍
 	Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
 		Matrix newMatrix(lhs.ROW, lhs.CUL);
@@ -188,6 +209,11 @@ namespace myk::lib {
 		return multiply(lhs, rhs);
 	}
 
+	myk::UPtrMtx operator*(const myk::UPtrMtx& lhs, const myk::UPtrMtx& rhs) noexcept(false) {
+		return multiply(lhs, rhs);
+	}
+
+
 	bool operator==(const Matrix& lhs, const Matrix& rhs) {
 		//shapeチェック
 		if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
@@ -215,6 +241,7 @@ namespace myk {
 	/// <summary>
 	/// MatrixオブジェクトをIDと紐づけて管理するクラス。
 	/// MatrinxオブジェクトにアクセスするときはIDが必要。(デリート、取得など）
+	/// Matrixオブジェクトは UPtrMtx として管理しています。Matrixのunique_ptrです。
 	/// Singleton クラス なので ManageMTXObj& getIncetance() で取得。
 	/// </summary>
 	class ManageMTXObj {
@@ -281,8 +308,8 @@ namespace myk {
 		/// <summary>
 		/// IDでMatrixオブジェクトを取得
 		/// </summary>
-		UPtrMtx getUPtrMtx(ID id) {
-			return std::move(_mtxList.at(id));
+		UPtrMtx& getUPtrMtx(ID id) {
+			return _mtxList.at(id);
 		}
 
 		ManageMTXObj(const ManageMTXObj&)				= delete;
@@ -354,6 +381,19 @@ myk::ID initNativeMatrix(double* arr, int len, uint32_t ROW, uint32_t CUL) {
 	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
 	ID id = mmo.registMTXObj(std::move(mtx));
 	return id;
+}
+
+// 行列積を実行
+myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
+	using namespace myk::lib;
+	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+	myk::UPtrMtx& upmL = mmo.getUPtrMtx(lhs);
+	myk::UPtrMtx& upmR = mmo.getUPtrMtx(rhs);
+	try {
+		myk::UPtrMtx mtx = upmL * upmR;
+		return mmo.registMTXObj(std::move(mtx));
+	} catch (...) {
+	}
 }
 
 #pragma endregion

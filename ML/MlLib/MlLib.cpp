@@ -306,7 +306,10 @@ namespace myk {
 		}
 
 		/// <summary>
-		/// IDでMatrixオブジェクトを取得
+		/// IDでMatrixオブジェクトの参照を取得
+        /// オブジェクトの参照を取得後にregistMTXObj(UPtrMtx)メソッド等で
+        /// Matrixオブジェクトを追加するとメモリの再配置により参照が無効になる可能性に注意。
+        /// <param name="id"></param>
 		/// </summary>
 		UPtrMtx& getUPtrMtx(ID id) {
 			return _mtxList.at(id);
@@ -323,7 +326,7 @@ namespace myk {
 	};
 
 	ManageMTXObj ManageMTXObj::_instance;
-}
+} // namespace myk end
 
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
 	return myk::lib::Matrix(ROW, CUL);

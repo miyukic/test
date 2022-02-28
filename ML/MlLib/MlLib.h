@@ -154,7 +154,7 @@ namespace myk {
 			return !(lhs == rhs);
 		}
 		
-	}
+	} // ::lib namespace end
 } // myk namespace end
 
 namespace myk {

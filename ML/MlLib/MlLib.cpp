@@ -7,9 +7,9 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <initializer_list>
 #include <memory>
 #include <algorithm>
+#include <exception>
 
 #ifndef DBG
 #if _DEBUG
@@ -265,6 +265,8 @@ namespace myk {
 		/// Matrixオブジェクトを登録
 		/// 戻り値は管理用のID
 		/// </summary>
+		/// <param name="matrix"></param>
+		/// <returns></returns>
 		ID registMTXObj(UPtrMtx matrix) {
 			if (_deletedNum.size() > 0) {
 				ID id = (ID) _deletedNum.size();
@@ -327,6 +329,14 @@ namespace myk {
 
 	ManageMTXObj ManageMTXObj::_instance;
 } // namespace myk end
+
+namespace myk {
+	inline namespace test {
+		myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
+			return myk::lib::Matrix(ROW, CUL);
+		}
+	}
+}
 
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
 	return myk::lib::Matrix(ROW, CUL);
@@ -395,7 +405,12 @@ myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
 	try {
 		myk::UPtrMtx mtx = upmL * upmR;
 		return mmo.registMTXObj(std::move(mtx));
-	} catch (...) {
+	} catch (const char* msg) {
+		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 3 << "行目\n"
+			<< msg << std::endl;
+	} catch (std::exception& e) {
+		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 6 << "行目\n"
+		<< e.what() << std::endl;
 	}
 }
 

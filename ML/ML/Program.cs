@@ -57,7 +57,7 @@ namespace Myk {
 
         }
         #endregion
-    }　// Myk.Util namespace end
+    }　// .Util namespace end
     namespace Lib {
         #region Matrix
         using ID = System.UInt16;
@@ -65,11 +65,11 @@ namespace Myk {
         class CMatrix {
             public uint ROW { get; }
             public uint CUL { get; }
-
-            private ID id;
+            private ID _id;
+            public ID id { get { return _id; } }
 
             /// <summary>
-            /// 行と列を指定して指定した値で初期化
+            /// 行と列(と初期値(value=0.0))を指定して初期化
             /// </summary>
             /// <param name="ROW">行</param>
             /// <param name="CUL">列</param>
@@ -77,7 +77,20 @@ namespace Myk {
             public CMatrix(uint ROW, uint CUL, double value = 0.0) {
                 this.ROW = ROW;
                 this.CUL = CUL;
-                //createNativeMatrix();
+                _id = createNativeMatrix(ROW, CUL, value);
+            }
+
+            /// <summary>
+            /// IDと行と列を指定して作成
+            /// 存在しないIDを指定するのは禁止。
+            /// </summary>
+            /// <param name="id"></param>
+            /// <param name="ROW">行</param>
+            /// <param name="CUL">列</param>
+            private CMatrix(ID id, uint ROW, uint CUL) {
+                this.ROW = ROW;
+                this.CUL = CUL;
+                _id = id;
             }
 
             /// <summary>
@@ -89,33 +102,49 @@ namespace Myk {
                 uint cul = (uint) array2.GetLength(1);
                 double[] array = array2.OfType<double>().ToArray();
                 var (pInt, len) = createNativeDoubleArray(array);
-                id = initNativeMatrix(pInt, len, row, cul);
+                _id = initNativeMatrix(pInt, len, row, cul);
             }
-            private static(System.IntPtr, int)createNativeDoubleArray(in double[] array) {
+            /// <summary>
+            /// 行列積
+            /// </summary>
+            /// <param name="lhs"></param>
+            /// <param name="rhs"></param>
+            /// <returns></returns>
+            public static CMatrix Multiply(in CMatrix lhs, in CMatrix rhs) {
+                ID newid = nativeDoMultiply(lhs.id, rhs.id);
+                CMatrix newMat = new CMatrix(newid, lhs.ROW, rhs.CUL);
+                return newMat;
+            }
 
+            /// <summary>
+            /// 配列からアンマネージド型の配列をメモリ上に生成しそのIntPtrと配列のサイズを返す
+            /// IntPtr = void*
+            /// </summary>
+            /// <param name="array"></param>
+            /// <returns></returns>
+            private static (System.IntPtr, int)createNativeDoubleArray(in double[] array) {
                 int length = array.Length;
-
                 // 確保する配列のメモリサイズ（double型 × 長さ）  
                 int size = Marshal.SizeOf(typeof(double)) * length;
-
                 // C++に渡す配列のアンマネージドメモリを確保  
                 // ※「ptr」は確保したメモリのポインタ  
                 System.IntPtr ptr = Marshal.AllocCoTaskMem(size);
-
                 // C#の配列をアンマネージドメモリにコピーする  
                 Marshal.Copy(array, 0, ptr, length);
-
                 // C++に配列を渡す(ポインタを渡す)  
                 return (ptr, length);
-
                 // アンマネージドのメモリを解放  
                 //Marshal.FreeCoTaskMem(ptr);
             }
+
             [DllImport("MlLib.dll")]
             public static extern ID createNativeMatrix(uint ROW, uint CUL, double value);
 
             [DllImport("MlLib.dll")]
             public static extern ID initNativeMatrix(System.IntPtr arr, int len, uint row, uint cul);
+
+            [DllImport("MlLib.dll")]
+            public static extern ID nativeDoMultiply(ID lId, ID rId);
         }
 
         /// <summary>

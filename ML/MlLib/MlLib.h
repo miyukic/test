@@ -160,9 +160,16 @@ namespace myk {
 namespace myk {
 	using UPtrMtx = std::unique_ptr<lib::Matrix>;
 #ifdef _MSC_VER
+#	ifdef WORD
 	using ID = WORD;
+#	else
+#	include <limits.h>
+#	if USHRT_MAX == 0xFFFF 
+		using ID = unsigned short;
+#	endif
+#	endif
 #else
-	using ID = utin16_t;
+	using ID = uint16_t;
 #endif
 } // myk namespace end
 

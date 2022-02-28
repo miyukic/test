@@ -219,7 +219,6 @@ extern "C" {
 	/// <param name=""></param>
 	/// <returns></returns>
 	MLLIB_API myk::ID initNativeMatrix(double*, int, int, int);
-	
 
 	/// <summary>
 	/// 
@@ -228,6 +227,21 @@ extern "C" {
 	/// <param name="rhs"></param>
 	/// <returns></returns>
 	MLLIB_API myk::ID nativeDoMultiply(myk::ID, myk::ID);
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	MLLIB_API uint32_t getROW(myk::ID id);
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	MLLIB_API uint32_t getCUL(myk::ID id);
+
 #ifdef __cplusplus
 }
 #endif

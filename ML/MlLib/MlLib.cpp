@@ -414,4 +414,15 @@ myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
 	}
 }
 
+uint32_t getROW(myk::ID id) {
+	using namespace myk;
+	ManageMTXObj& mmo = ManageMTXObj::getInstance();
+	return mmo.getUPtrMtx(id)->ROW;
+}
+
+uint32_t getCUL(myk::ID id) {
+	using namespace myk;
+	ManageMTXObj& mmo = ManageMTXObj::getInstance();
+	return mmo.getUPtrMtx(id)->CUL;
+}
 #pragma endregion

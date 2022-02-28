@@ -214,6 +214,13 @@ extern "C" {
 	MLLIB_API myk::ID initNativeMatrix(double*, int, int, int);
 	
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="lhs"></param>
+	/// <param name="rhs"></param>
+	/// <returns></returns>
+	MLLIB_API myk::ID nativeDoMultiply(myk::ID, myk::ID);
 #ifdef __cplusplus
 }
 #endif

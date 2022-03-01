@@ -13,10 +13,17 @@
 
 #ifndef DBG
 #if _DEBUG
-#define DBG(...)\
-std::cout << #__VA_ARGS__ << " = " << [&](){ return __VA_ARGS__; }() << std::endl;
+#	define DBG(...) std::cout << #__VA_ARGS__ << " = " << [&](){ return __VA_ARGS__; }() << std::endl;
+#	define _PRINT(...) std::cout << __VA_ARGS__ << std::endl;
+#	define COMPILE_SOURCE_TIME() _PRINT("DATE: " << __DATE__ << "TIME: " << __TIME__)
+#	define COMPILE_SOURCE_LOCATION() _PRINT("\nFILE: " << __FILE__ << "LINE: " << __LINE__ << "Func" << __func__)
+#	define PRINT(x) COMPILE_SOURCE_ ## x ## ()
 #else
-#define DBG(...)
+#	define DBG(...)
+#	define _PRINT(...)
+#	define COMPILE_SOURCE_TIME()
+#	define COMPILE_SOURCE_LOCATION()
+#	define PRINT(x)
 #endif
 #endif
 #ifndef _2DIMENSIONAL_ARRAY
@@ -251,7 +258,6 @@ namespace myk {
 		static ManageMTXObj _instance;
 
 	public:
-		inline static int hoge = 0;
 		/// <summary>
 		/// ManageMTXObj を返す。
 		/// </summary>
@@ -427,8 +433,26 @@ uint32_t getCUL(myk::ID id) {
 
 }
 
-void	matrixConsoleOutPut(myk::ID id) {
+bool	matrixConsoleOutPut(myk::ID id) {
 	using namespace myk;
-	ManageMTXObj::getInstance().getUPtrMtx(id)->print();
+	try {
+		ManageMTXObj::getInstance().getUPtrMtx(id)->print();
+	} catch (std::exception e) {
+		DBG("matrixConsoleOutPut(myk::ID)", e.what())
+			PRINT(TIME);
+			PRINT(LOCATION);
+		return false;
+	}
+	return true;
+}
+
+BOOL equals(myk::ID lhs, myk::ID rhs) {
+	using namespace myk::lib;
+	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+	myk::UPtrMtx& l = mmo.getUPtrMtx(lhs);
+	myk::UPtrMtx& r = mmo.getUPtrMtx(rhs);
+	bool result = *l == *r; //resultにtrueに。
+		int a = result; //aが出鱈目な値に.-858993460
+	return (*l == *r); //C#側で値を受け取ると出鱈目な値(-858993460)になる。C++でbool値として受け取ると1になる...?
 }
 #pragma endregion //FFI API

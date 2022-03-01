@@ -13,6 +13,10 @@
 #		define MLLIB_API
 #	endif
 #endif
+#ifndef _WINDOWS
+typedef int BOOL;
+#endif // !_WINDOWS
+
 #pragma once
 #include <vector>
 #include <initializer_list>
@@ -241,7 +245,13 @@ extern "C" {
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	MLLIB_API void matrixConsoleOutPut(myk::ID id);
+	MLLIB_API bool matrixConsoleOutPut(myk::ID id);
+
+	/// <summary>
+	/// IDを指定し行列を比較する
+	/// </summary>
+	/// <param name="id"></param>
+	MLLIB_API BOOL equals(myk::ID lhs, myk::ID rhs);
 #ifdef __cplusplus
 }
 #endif

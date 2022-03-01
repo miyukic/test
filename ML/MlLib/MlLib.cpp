@@ -453,6 +453,7 @@ BOOL equals(myk::ID lhs, myk::ID rhs) {
 	myk::UPtrMtx& r = mmo.getUPtrMtx(rhs);
 	bool result = *l == *r; //resultにtrueに。
 		int a = result; //aが出鱈目な値に.-858993460
-	return result; //色々してたら正しく1が返るようになった...?
+
+	return result; //正しく1が返るようになった...?
 }
 #pragma endregion //FFI API

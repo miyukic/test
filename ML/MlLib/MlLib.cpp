@@ -424,5 +424,11 @@ uint32_t getCUL(myk::ID id) {
 	using namespace myk;
 	ManageMTXObj& mmo = ManageMTXObj::getInstance();
 	return mmo.getUPtrMtx(id)->CUL;
+
 }
-#pragma endregion
+
+void	matrixConsoleOutPut(myk::ID id) {
+	using namespace myk;
+	ManageMTXObj::getInstance().getUPtrMtx(id)->print();
+}
+#pragma endregion //FFI API

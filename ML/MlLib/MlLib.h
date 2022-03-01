@@ -184,64 +184,64 @@ extern "C" {
 	MLLIB_API int fnMlLib(void);
 
 	/// <summary>
-	/// 
+	/// 行と列と値を指定して行列を作成。
+	/// 行列のIDを返す。
 	/// </summary>
-	/// <param name=""></param>
-	/// <param name=""></param>
-	/// <param name=""></param>
-	/// <returns></returns>
+	/// <param name="">行</param>
+	/// <param name="">列</param>
+	/// <param name="">初期値</param>
+	/// <returns>行列オブジェクトのID</returns>
 	MLLIB_API myk::ID createNativeMatrix(uint32_t, uint32_t, double);
 
 	/// <summary>
-	/// 
+	/// IDを指定して行列を削除
 	/// </summary>
 	/// <param name=""></param>
 	MLLIB_API void deleteNativeMatrix(myk::ID);
 
 	/// <summary>
-	/// 
+	/// 使用していない行列をメモリから削除する。
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>削除した行列の数</returns>
 	MLLIB_API uint32_t unusedNatMatRelease();
 
 	/// <summary>
-	/// 
 	/// </summary>
-	/// <returns></returns>
-	MLLIB_API uint32_t unusedNatMatRelease();
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name=""></param>
-	/// <param name=""></param>
-	/// <param name=""></param>
-	/// <param name=""></param>
+	/// <param name="">行列を初期化する一次元配列</param>
+	/// <param name="">使われてない</param>
+	/// <param name="">行</param>
+	/// <param name="">列</param>
 	/// <returns></returns>
 	MLLIB_API myk::ID initNativeMatrix(double*, uint32_t, uint32_t, uint32_t);
 
 	/// <summary>
-	/// 
+	/// 行列積を計算し結果の行列のIDを返す
 	/// </summary>
 	/// <param name="lhs"></param>
 	/// <param name="rhs"></param>
-	/// <returns></returns>
+	/// <returns>行列オブジェクトのID</returns>
 	MLLIB_API myk::ID nativeDoMultiply(myk::ID, myk::ID);
 
 	/// <summary>
-	/// 
+	/// IDの行を取得
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
 	MLLIB_API uint32_t getROW(myk::ID id);
 
 	/// <summary>
-	/// 
+	/// IDの列を取得
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
 	MLLIB_API uint32_t getCUL(myk::ID id);
 
+	/// <summary>
+	/// IDを指定し行列の内容を標準出力する。
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	MLLIB_API void matrixConsoleOutPut(myk::ID id);
 #ifdef __cplusplus
 }
 #endif

@@ -61,6 +61,7 @@ namespace Myk {
     namespace Lib {
         #region Matrix
         using ID = System.UInt16;
+        using BOOL = System.Int32;
         // C++で実装されたMatrixクラスの薄いラッパークラス
         class CMatrix {
             public uint ROW { get; }
@@ -77,12 +78,12 @@ namespace Myk {
             public CMatrix(uint ROW, uint CUL, double value = 0.0) {
                 this.ROW = ROW;
                 this.CUL = CUL;
-                _id = createNativeMatrix(ROW, CUL, value);
+                _id = NativeMethod.createNativeMatrix(ROW, CUL, value);
             }
 
             /// <summary>
             /// IDと行と列を指定して作成
-            /// 存在しないIDを指定するのは禁止。
+            /// 存在しないIDを指定するのは禁止(C++側から返ってきたIDのみ指定可能)。
             /// </summary>
             /// <param name="id"></param>
             /// <param name="ROW">行</param>
@@ -105,9 +106,23 @@ namespace Myk {
                     array2.Cast<double>().ToArray();
                 //ofType<TResult> Cast<TResult>
                 //https://referencesource.microsoft.com/#System.Core/System/Linq/Enumerable.cs,d25cf953c577dcd6
-                (IntPtr pInt, uint len) = createNativeDoubleArray(array);
-                _id = initNativeMatrix(pInt, len, row, cul);
+                (IntPtr pInt, uint len) = CreateNativeDoubleArray(array);
+                _id = NativeMethod.initNativeMatrix(pInt, len, row, cul);
             }
+
+            public bool Print() {
+                return NativeMethod.matrixConsoleOutPut(_id);
+            }
+
+            public static bool operator==(CMatrix lhs, CMatrix rhs) {
+                Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
+                return Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
+            }
+
+            public static bool operator!=(CMatrix lhs, CMatrix rhs) {
+                return ! Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
+            }
+
             /// <summary>
             /// 行列積
             /// </summary>
@@ -115,10 +130,11 @@ namespace Myk {
             /// <param name="rhs"></param>
             /// <returns></returns>
             public static CMatrix Multiply(in CMatrix lhs, in CMatrix rhs) {
-                ID newid = nativeDoMultiply(lhs.id, rhs.id);
+                ID newid = NativeMethod.nativeDoMultiply(lhs.id, rhs.id);
                 CMatrix newMat = new CMatrix(newid, lhs.ROW, rhs.CUL);
                 return newMat;
             }
+
 
             /// <summary>
             /// 配列からアンマネージド型の配列をメモリ上に生成しそのIntPtrと配列のサイズを返す
@@ -126,7 +142,7 @@ namespace Myk {
             /// </summary>
             /// <param name="array"></param>
             /// <returns></returns>
-            private static (System.IntPtr, uint)createNativeDoubleArray(double[] array) {
+            private static (System.IntPtr, uint)CreateNativeDoubleArray(double[] array) {
                 int length = array.Length;
                 // 確保する配列のメモリサイズ（double型 × 長さ）  
                 int size = Marshal.SizeOf(typeof(double)) * length;
@@ -141,14 +157,24 @@ namespace Myk {
                 //Marshal.FreeCoTaskMem(ptr);
             }
 
-            [DllImport("MlLib.dll")]
-            public static extern ID createNativeMatrix(uint ROW, uint CUL, double value);
+            //C++の関数
+            static class NativeMethod {
+                [DllImport("MlLib.dll")]
+                public static extern ID createNativeMatrix(uint ROW, uint CUL, double value);
 
-            [DllImport("MlLib.dll")]
-            public static extern ID initNativeMatrix(System.IntPtr arr, uint len, uint row, uint cul);
+                [DllImport("MlLib.dll")]
+                public static extern ID initNativeMatrix(System.IntPtr arr, uint len, uint row, uint cul);
 
-            [DllImport("MlLib.dll")]
-            public static extern ID nativeDoMultiply(ID lId, ID rId);
+                [DllImport("MlLib.dll")]
+                public static extern ID nativeDoMultiply(ID lId, ID rId);
+
+                [DllImport("MlLib.dll")]
+                public static extern bool matrixConsoleOutPut(ID id);
+
+                [DllImport("MlLib.dll")]
+                public static extern BOOL equals(ID lId, ID rId);
+
+            }
         }
 
         /// <summary>
@@ -257,7 +283,7 @@ namespace Myk {
             return x * w + bias;
         }
 
-        public void run() {
+        public void Run() {
             var x = new Matrix1x2(input1, input2);
             var w = new Matrix2x1(weight1, weight2);
             _output = Affine(x, w, bias);
@@ -406,7 +432,11 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
-            CMatrix cm = new CMatrix(new double[3,3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
+            CMatrix cm  = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
+            CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
+            Console.WriteLine(cm == cm2);
+            Console.WriteLine(cm == cm);
+            #region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
             //ICollection<int> list = new LinkedList<int>();
@@ -459,8 +489,9 @@ namespace Myk {
             //    t = sw.ElapsedMilliseconds;
             //    Console.WriteLine("forloop + double: " + t + " ms");
             //}
-
+            #endregion
             //Application.Run(new Form1());
+
         }
 
     }

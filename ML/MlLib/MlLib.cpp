@@ -453,6 +453,6 @@ BOOL equals(myk::ID lhs, myk::ID rhs) {
 	myk::UPtrMtx& r = mmo.getUPtrMtx(rhs);
 	bool result = *l == *r; //resultにtrueに。
 		int a = result; //aが出鱈目な値に.-858993460
-	return (*l == *r); //C#側で値を受け取ると出鱈目な値(-858993460)になる。C++でbool値として受け取ると1になる...?
+	return result; //色々してたら正しく1が返るようになった...?
 }
 #pragma endregion //FFI API

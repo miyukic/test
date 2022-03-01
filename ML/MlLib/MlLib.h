@@ -218,7 +218,7 @@ extern "C" {
 	/// <param name=""></param>
 	/// <param name=""></param>
 	/// <returns></returns>
-	MLLIB_API myk::ID initNativeMatrix(double*, int, int, int);
+	MLLIB_API myk::ID initNativeMatrix(double*, uint32_t, uint32_t, uint32_t);
 
 	/// <summary>
 	/// 

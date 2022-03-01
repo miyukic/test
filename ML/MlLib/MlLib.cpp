@@ -382,7 +382,7 @@ uint32_t unusedNatMatRelease() {
 	return mmo.memoryRelease();
 }
 
-myk::ID initNativeMatrix(double* arr, int len, uint32_t ROW, uint32_t CUL) {
+myk::ID initNativeMatrix(double* arr, uint32_t len, uint32_t ROW, uint32_t CUL) {
 	using namespace myk;
 	std::vector<std::vector<double>> vec(ROW, std::vector<double>(CUL));
 	for (size_t r = 0; r < ROW; ++r) {

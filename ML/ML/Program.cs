@@ -100,8 +100,12 @@ namespace Myk {
             public CMatrix(in double[,] array2) {
                 uint row = (uint) array2.GetLength(0);
                 uint cul = (uint) array2.GetLength(1);
-                double[] array = array2.OfType<double>().ToArray();
-                var (pInt, len) = createNativeDoubleArray(array);
+                double[] array = 
+                    //array2.OfType<double>().ToArray();
+                    array2.Cast<double>().ToArray();
+                //ofType<TResult> Cast<TResult>
+                //https://referencesource.microsoft.com/#System.Core/System/Linq/Enumerable.cs,d25cf953c577dcd6
+                (IntPtr pInt, uint len) = createNativeDoubleArray(array);
                 _id = initNativeMatrix(pInt, len, row, cul);
             }
             /// <summary>
@@ -122,17 +126,17 @@ namespace Myk {
             /// </summary>
             /// <param name="array"></param>
             /// <returns></returns>
-            private static (System.IntPtr, int)createNativeDoubleArray(in double[] array) {
+            private static (System.IntPtr, uint)createNativeDoubleArray(double[] array) {
                 int length = array.Length;
                 // 確保する配列のメモリサイズ（double型 × 長さ）  
                 int size = Marshal.SizeOf(typeof(double)) * length;
                 // C++に渡す配列のアンマネージドメモリを確保  
                 // ※「ptr」は確保したメモリのポインタ  
-                System.IntPtr ptr = Marshal.AllocCoTaskMem(size);
+                System.IntPtr ptr = Marshal.AllocCoTaskMem((int)size);
                 // C#の配列をアンマネージドメモリにコピーする  
                 Marshal.Copy(array, 0, ptr, length);
                 // C++に配列を渡す(ポインタを渡す)  
-                return (ptr, length);
+                return (ptr, (uint) length);
                 // アンマネージドのメモリを解放  
                 //Marshal.FreeCoTaskMem(ptr);
             }
@@ -141,7 +145,7 @@ namespace Myk {
             public static extern ID createNativeMatrix(uint ROW, uint CUL, double value);
 
             [DllImport("MlLib.dll")]
-            public static extern ID initNativeMatrix(System.IntPtr arr, int len, uint row, uint cul);
+            public static extern ID initNativeMatrix(System.IntPtr arr, uint len, uint row, uint cul);
 
             [DllImport("MlLib.dll")]
             public static extern ID nativeDoMultiply(ID lId, ID rId);
@@ -402,7 +406,7 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
-
+            CMatrix cm = new CMatrix(new double[3,3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
             //ICollection<int> list = new LinkedList<int>();

@@ -480,9 +480,11 @@ myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
 	} catch (const char* msg) {
 		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 3 << "行目\n"
 			<< msg << std::endl;
+		return 0;
 	} catch (std::exception& e) {
 		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 6 << "行目\n"
 		<< e.what() << std::endl;
+		return 0;
 	}
 }
 
@@ -505,10 +507,9 @@ uint32_t getCUL(myk::ID id) {
 	using namespace myk;
 	ManageMTXObj& mmo = ManageMTXObj::getInstance();
 	return mmo.getUPtrMtx(id)->CUL;
-
 }
 
-BOOL	matrixConsoleOutPut(myk::ID id) {
+BOOL matrixConsoleOutPut(myk::ID id) {
 	using namespace myk;
 	try {
 		ManageMTXObj::getInstance().getUPtrMtx(id)->print();
@@ -527,7 +528,7 @@ BOOL matrixEquals(myk::ID lhs, myk::ID rhs) {
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
 	myk::UPtrMtx& l = mmo.getUPtrMtx(lhs);
 	myk::UPtrMtx& r = mmo.getUPtrMtx(rhs);
-	return (l == r); //resultにtrueに。
+	return (*l) == (*r);
 }
 
 myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs) {

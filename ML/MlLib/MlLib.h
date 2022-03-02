@@ -284,7 +284,7 @@ extern "C" {
 	/// </summary>
 	/// <param name="lhs"></param>
 	/// <param name="rhs"></param>
-	myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs);
+	MLLIB_API myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs);
 #ifdef __cplusplus
 }
 #endif

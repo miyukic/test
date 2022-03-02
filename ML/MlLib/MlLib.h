@@ -212,7 +212,7 @@ extern "C" {
 	/// <param name="">列</param>
 	/// <param name="">初期値</param>
 	/// <returns>行列オブジェクトのID</returns>
-	MLLIB_API myk::ID createNativeMatrix(uint32_t, uint32_t, double);
+	MLLIB_API myk::ID createNativeMatrixRCV(uint32_t, uint32_t, double);
 
 	/// <summary>
 	/// IDを指定して行列を削除
@@ -233,7 +233,7 @@ extern "C" {
 	/// <param name="">行</param>
 	/// <param name="">列</param>
 	/// <returns></returns>
-	MLLIB_API myk::ID initNativeMatrix(double*, uint32_t, uint32_t, uint32_t);
+	MLLIB_API myk::ID createNativeMatrixARC(double*, uint32_t, uint32_t, uint32_t);
 
 	/// <summary>
 	/// 行列積を計算し結果の行列のIDを返す
@@ -241,7 +241,7 @@ extern "C" {
 	/// <param name="lhs"></param>
 	/// <param name="rhs"></param>
 	/// <returns>行列オブジェクトのID</returns>
-	MLLIB_API myk::ID nativeDoMultiply(myk::ID, myk::ID);
+	MLLIB_API myk::ID nativeMatrixMultiply(myk::ID, myk::ID);
 
 	/// <summary>
 	/// 行列にスカラー値を加算します。
@@ -249,7 +249,7 @@ extern "C" {
 	/// <param name="lId"></param>
 	/// <param name="value"></param>
 	/// <returns>行列オブジェクトのID</returns>
-	MLLIB_API myk::ID nativeDoAdd(myk::ID, double);
+	MLLIB_API myk::ID nativeMatrixAddSC(myk::ID, double);
 
 	/// <summary>
 	/// IDの行を取得
@@ -277,7 +277,7 @@ extern "C" {
 	/// </summary>
 	/// <param name="lhs"></param>
 	/// <param name="rhs"></param>
-	MLLIB_API BOOL matrixEquals(myk::ID lhs, myk::ID rhs);
+	MLLIB_API BOOL nativeMatrixEquals(myk::ID lhs, myk::ID rhs);
 
 	/// <summary>
 	/// 行列同士で加算する

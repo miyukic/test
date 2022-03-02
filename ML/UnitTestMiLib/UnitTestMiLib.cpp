@@ -77,9 +77,9 @@ namespace UnitTestMiLib
 				1, 2, 3, 4,
 				1, 2, 3, 4
 			};
-			myk::ID id = initNativeMatrix(arr, 0, 3, 4);
-			myk::ID id2 = initNativeMatrix(arr, 0, 3, 4);
-			bool result = matrixEquals(id, id2);
+			myk::ID id = createNativeMatrixARC(arr, 0, 3, 4);
+			myk::ID id2 = createNativeMatrixARC(arr, 0, 3, 4);
+			bool result = nativeMatrixEquals(id, id2);
 			Assert::AreEqual(true, result);
 			//Logger::WriteMessage((std::to_string(result)).c_str());
 			DBG(result);
@@ -89,8 +89,8 @@ namespace UnitTestMiLib
 				8, 2, 11 , 4.2 ,
 				3, 2, 3.3, 6.12
 			};
-			myk::ID id3 = initNativeMatrix(arr2, 0, 3, 4);
-			bool result2 = matrixEquals(id, id3);
+			myk::ID id3 = createNativeMatrixARC(arr2, 0, 3, 4);
+			bool result2 = nativeMatrixEquals(id, id3);
 			Assert::AreEqual(false, result2);
 			double arr3[] =
 			{
@@ -99,8 +99,8 @@ namespace UnitTestMiLib
 				3, 2, 3.3, 6.12,
 				3, 2, 3.3, 6.12
 			};
-			myk::ID id4 = initNativeMatrix(arr3, 0, 4, 4);
-			bool result3 = matrixEquals(id, id4);
+			myk::ID id4 = createNativeMatrixARC(arr3, 0, 4, 4);
+			bool result3 = nativeMatrixEquals(id, id4);
 			Assert::AreEqual(false, result3);
 		}
 
@@ -113,8 +113,8 @@ namespace UnitTestMiLib
 				1, 2, 3, 4,
 				1, 2, 3, 4
 			};
-			myk::ID id = initNativeMatrix(arr, 0, 3, 4);
-			myk::ID id2 = initNativeMatrix(arr, 0, 3, 4);
+			myk::ID id = createNativeMatrixARC(arr, 0, 3, 4);
+			myk::ID id2 = createNativeMatrixARC(arr, 0, 3, 4);
 			double answer1[] =
 			{
 				2, 4, 6, 8,
@@ -122,7 +122,7 @@ namespace UnitTestMiLib
 				2, 4, 6, 8
 			};
 			ID tmp = nativeMatrixAdd(id, id2);
-			bool result1 = matrixEquals(tmp, initNativeMatrix(answer1, 0, 3, 4));
+			bool result1 = nativeMatrixEquals(tmp, createNativeMatrixARC(answer1, 0, 3, 4));
 			Assert::AreEqual(true, result1);
 			double arr2[] =
 			{
@@ -130,14 +130,14 @@ namespace UnitTestMiLib
 				8, 2, 11 , 4.2 ,
 				3, 2, 3.3, 6.12
 			};
-			myk::ID id3 = initNativeMatrix(arr2, 0, 3, 4);
+			myk::ID id3 = createNativeMatrixARC(arr2, 0, 3, 4);
 			double answer2[] =
 			{
 				1+9, 2+4, 3+3.0, 4+4.00,
 				1+8, 2+2, 3+11, 4+4.2,
 				1+3, 2+2, 3+3.3, 4+6.12
 			};
-			matrixEquals(nativeMatrixAdd(id, id3), initNativeMatrix(answer2, 0, 3, 4));
+			nativeMatrixEquals(nativeMatrixAdd(id, id3), createNativeMatrixARC(answer2, 0, 3, 4));
 		}
 
 	};

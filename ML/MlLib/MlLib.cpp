@@ -428,7 +428,7 @@ int fnMlLib(void) {
 }
 
 // Matrixオブジェクトを生成しidを返す。
-myk::ID createNativeMatrix(uint32_t ROW, uint32_t CUL, double value) {
+myk::ID createNativeMatrixRCV(uint32_t ROW, uint32_t CUL, double value) {
 	DBG(ROW);
 	DBG(CUL);
 	DBG(value);
@@ -453,7 +453,7 @@ uint32_t unusedNatMatRelease() {
 	return mmo.memoryRelease();
 }
 
-myk::ID initNativeMatrix(double* arr, uint32_t len, uint32_t ROW, uint32_t CUL) {
+myk::ID createNativeMatrixARC(double* arr, uint32_t len, uint32_t ROW, uint32_t CUL) {
 	using namespace myk;
 	std::vector<std::vector<double>> vec(ROW, std::vector<double>(CUL));
 	for (size_t r = 0; r < ROW; ++r) {
@@ -468,7 +468,7 @@ myk::ID initNativeMatrix(double* arr, uint32_t len, uint32_t ROW, uint32_t CUL) 
 }
 
 // 行列積を実行
-myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
+myk::ID nativeMatrixMultiply(myk::ID lhs, myk::ID rhs) {
 	using namespace myk::lib;
 	using namespace myk;
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
@@ -478,18 +478,18 @@ myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
 		myk::UPtrMtx mtx = upmL * upmR;
 		return mmo.registMTXObj(std::move(mtx));
 	} catch (const char* msg) {
-		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 3 << "行目\n"
+		std::cerr << "nativeMatrixMultiply() 関数 " << (__LINE__) - 3 << "行目\n"
 			<< msg << std::endl;
 		return 0;
 	} catch (std::exception& e) {
-		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 6 << "行目\n"
+		std::cerr << "nativeMatrixMultiply() 関数 " << (__LINE__) - 6 << "行目\n"
 		<< e.what() << std::endl;
 		return 0;
 	}
 }
 
 //スカラー値を加算
-myk::ID nativeDoAdd(myk::ID lId, double value) {
+myk::ID nativeMatrixAddSC(myk::ID lId, double value) {
 	using namespace myk::lib;
 	using namespace myk;
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
@@ -509,12 +509,12 @@ uint32_t getCUL(myk::ID id) {
 	return mmo.getUPtrMtx(id)->CUL;
 }
 
-BOOL matrixConsoleOutPut(myk::ID id) {
+BOOL nativeMatrixPrint(myk::ID id) {
 	using namespace myk;
 	try {
 		ManageMTXObj::getInstance().getUPtrMtx(id)->print();
 	} catch (std::exception e) {
-		DBG("matrixConsoleOutPut(myk::ID)", e.what())
+		DBG("nativeMatrixPrint(myk::ID)", e.what())
 			PRINT(TIME);
 			PRINT(LOCATION);
 		return false;
@@ -522,7 +522,7 @@ BOOL matrixConsoleOutPut(myk::ID id) {
 	return true;
 }
 
-BOOL matrixEquals(myk::ID lhs, myk::ID rhs) {
+BOOL nativeMatrixEquals(myk::ID lhs, myk::ID rhs) {
 	using namespace myk::lib;
 	using namespace myk;
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();

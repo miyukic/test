@@ -367,6 +367,23 @@ namespace myk {
 		return newMatr;
 	}
 
+	// 行列同士の加算
+	myk::UPtrMtx add(const myk::UPtrMtx& lhs, const myk::UPtrMtx& rhs) noexcept(false) {
+		using namespace std::literals::string_literals;
+		if (lhs->ROW != rhs->ROW || lhs->CUL != rhs->CUL) {
+			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+				+ "左辺 Matrix row = "s + std::to_string(lhs->ROW) + "cul = "s + std::to_string(lhs->CUL)
+				+ "右辺 Matrix row = "s + std::to_string(rhs->ROW) + "cul = "s + std::to_string(rhs->CUL);
+		}
+		myk::UPtrMtx newMatr = std::make_unique<Matrix>(lhs->ROW, lhs->CUL);
+		for (size_t i = 0; i < lhs->ROW; ++i) {
+			for (size_t j = 0; j < lhs->CUL; ++j) {
+				newMatr->at(i, j) = lhs->read(i, j) + lhs->read(i, j);
+			}
+		}
+		return newMatr;
+	}
+
 	// スカラー加算+演算子
 	myk::UPtrMtx operator+(const myk::UPtrMtx& lhs, double rhs) noexcept(false) {
 		return add(lhs, rhs);

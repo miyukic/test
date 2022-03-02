@@ -182,11 +182,15 @@ namespace myk {
 
 MLLIB_API UPtrMtx multiply(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false);
 
-MLLIB_API UPtrMtx add(const myk::UPtrMtx& lhs, double rhs) noexcept(false);
+MLLIB_API UPtrMtx add(const UPtrMtx& lhs, double rhs) noexcept(false);
+
+MLLIB_API UPtrMtx add(const UPtrMtx& lhs, UPtrMtx&  rhs) noexcept(false);
 
 MLLIB_API UPtrMtx operator*(const UPtrMtx& lhs, const  UPtrMtx& rhs) noexcept(false);
 
-MLLIB_API UPtrMtx operator+(const myk::UPtrMtx& lhs, double rhs) noexcept(false);
+MLLIB_API UPtrMtx operator+(const UPtrMtx& lhs, double rhs) noexcept(false);
+
+MLLIB_API UPtrMtx operator+(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false);
 } // myk namespace end
 
 

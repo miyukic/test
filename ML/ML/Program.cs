@@ -115,12 +115,12 @@ namespace Myk {
             }
 
             public static bool operator==(CMatrix lhs, CMatrix rhs) {
-                Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
+                //Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
                 return Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
             }
 
             public static bool operator!=(CMatrix lhs, CMatrix rhs) {
-                return ! Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
+                return !Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
             }
 
             /// <summary>
@@ -435,7 +435,6 @@ namespace Myk {
             CMatrix cm  = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
             CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
             Console.WriteLine(cm == cm2);
-            Console.WriteLine(cm == cm);
             #region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);

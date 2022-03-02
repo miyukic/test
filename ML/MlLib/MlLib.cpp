@@ -381,7 +381,7 @@ void deleteNativeMatrix(myk::ID id) {
 	mmo.invalidMTXObj(id);
 }
 
-//不要な行列を削除する
+// 不要な行列を削除する
 uint32_t unusedNatMatRelease() {
 	using namespace myk;
 	ManageMTXObj& mmo = ManageMTXObj::getInstance();
@@ -433,7 +433,7 @@ uint32_t getCUL(myk::ID id) {
 
 }
 
-bool	matrixConsoleOutPut(myk::ID id) {
+BOOL	matrixConsoleOutPut(myk::ID id) {
 	using namespace myk;
 	try {
 		ManageMTXObj::getInstance().getUPtrMtx(id)->print();
@@ -451,9 +451,6 @@ BOOL equals(myk::ID lhs, myk::ID rhs) {
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
 	myk::UPtrMtx& l = mmo.getUPtrMtx(lhs);
 	myk::UPtrMtx& r = mmo.getUPtrMtx(rhs);
-	bool result = *l == *r; //resultにtrueに。
-		int a = result; //aが出鱈目な値に.-858993460
-
-	return result; //正しく1が返るようになった...?
+	return (* l == *r); //resultにtrueに。
 }
 #pragma endregion //FFI API

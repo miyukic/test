@@ -245,7 +245,7 @@ extern "C" {
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	MLLIB_API bool matrixConsoleOutPut(myk::ID id);
+	MLLIB_API BOOL matrixConsoleOutPut(myk::ID id);
 
 	/// <summary>
 	/// IDを指定し行列を比較する

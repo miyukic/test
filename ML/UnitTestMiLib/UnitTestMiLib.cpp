@@ -61,7 +61,7 @@ namespace UnitTestMiLib
 		}
 
 
-		TEST_METHOD(addä÷êî1) {
+		TEST_METHOD(addä÷êîMatrixìØém) {
 			Matrix mtx1({ {3, 12.3, 5}, {2, 4.3, 5}, {4, 12, 123 } });
 			double a = 12;
 			Matrix mtx2 = add(mtx1, a);
@@ -79,7 +79,7 @@ namespace UnitTestMiLib
 			};
 			myk::ID id = initNativeMatrix(arr, 0, 3, 4);
 			myk::ID id2 = initNativeMatrix(arr, 0, 3, 4);
-			bool result = equals(id, id2);
+			bool result = matrixEquals(id, id2);
 			Assert::AreEqual(true, result);
 			//Logger::WriteMessage((std::to_string(result)).c_str());
 			DBG(result);
@@ -90,7 +90,7 @@ namespace UnitTestMiLib
 				3, 2, 3.3, 6.12
 			};
 			myk::ID id3 = initNativeMatrix(arr2, 0, 3, 4);
-			bool result2 = equals(id, id3);
+			bool result2 = matrixEquals(id, id3);
 			Assert::AreEqual(false, result2);
 			double arr3[] =
 			{
@@ -100,8 +100,44 @@ namespace UnitTestMiLib
 				3, 2, 3.3, 6.12
 			};
 			myk::ID id4 = initNativeMatrix(arr3, 0, 4, 4);
-			bool result3 = equals(id, id4);
+			bool result3 = matrixEquals(id, id4);
 			Assert::AreEqual(false, result3);
+		}
+
+		TEST_METHOD(UPtrMtxìØémÇÃâ¡éZ) {
+			using namespace myk;
+			using namespace myk::lib;
+			double arr[] =
+			{
+				1, 2, 3, 4,
+				1, 2, 3, 4,
+				1, 2, 3, 4
+			};
+			myk::ID id = initNativeMatrix(arr, 0, 3, 4);
+			myk::ID id2 = initNativeMatrix(arr, 0, 3, 4);
+			double answer1[] =
+			{
+				2, 4, 6, 8,
+				2, 4, 6, 8,
+				2, 4, 6, 8
+			};
+			ID tmp = nativeMatrixAdd(id, id2);
+			bool result1 = matrixEquals(tmp, initNativeMatrix(answer1, 0, 3, 4));
+			Assert::AreEqual(true, result1);
+			double arr2[] =
+			{
+				9, 4, 3.0, 4.00,
+				8, 2, 11 , 4.2 ,
+				3, 2, 3.3, 6.12
+			};
+			myk::ID id3 = initNativeMatrix(arr2, 0, 3, 4);
+			double answer2[] =
+			{
+				1+9, 2+4, 3+3.0, 4+4.00,
+				1+8, 2+2, 3+11, 4+4.2,
+				1+3, 2+2, 3+3.3, 4+6.12
+			};
+			matrixEquals(nativeMatrixAdd(id, id3), initNativeMatrix(answer2, 0, 3, 4));
 		}
 
 	};

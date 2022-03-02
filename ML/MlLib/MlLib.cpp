@@ -272,16 +272,16 @@ namespace myk {
 		/// </summary>
 		/// <param name="matrix"></param>
 		/// <returns></returns>
-		ID registMTXObj(UPtrMtx matrix) {
+		ID registMTXObj(UPtrMtx&& matrix) {
 			if (_deletedNum.size() > 0) {
-				ID id = (ID) _deletedNum.size();
+				ID id = static_cast<ID>(_deletedNum.size());
 				_mtxList.at(id) = std::move(matrix);
 				_deletedNum.pop_back();
 				return id;
 			}
-			uint32_t num = _mtxList.size();
+			ID id = static_cast<ID>(_mtxList.size());
 			_mtxList.emplace_back(std::move(matrix));
-			return num;
+			return id;
 		}
 
 		/// <summary>
@@ -386,6 +386,11 @@ namespace myk {
 
 	// スカラー加算+演算子
 	myk::UPtrMtx operator+(const myk::UPtrMtx& lhs, double rhs) noexcept(false) {
+		return add(lhs, rhs);
+	}
+
+	// 行列加算
+	myk::UPtrMtx operator+(const myk::UPtrMtx& lhs, const myk::UPtrMtx& rhs) noexcept(false) {
 		return add(lhs, rhs);
 	}
 
@@ -516,11 +521,23 @@ BOOL	matrixConsoleOutPut(myk::ID id) {
 	return true;
 }
 
-BOOL equals(myk::ID lhs, myk::ID rhs) {
+BOOL matrixEquals(myk::ID lhs, myk::ID rhs) {
 	using namespace myk::lib;
+	using namespace myk;
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
 	myk::UPtrMtx& l = mmo.getUPtrMtx(lhs);
 	myk::UPtrMtx& r = mmo.getUPtrMtx(rhs);
-	return (* l == *r); //resultにtrueに。
+	return (l == r); //resultにtrueに。
+}
+
+myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs) {
+	using namespace myk::lib;
+	using namespace myk;
+	ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+	UPtrMtx& l = mmo.getUPtrMtx(lhs);
+	UPtrMtx& r = mmo.getUPtrMtx(rhs);
+	ID id = mmo.registMTXObj(std::move(add(l, r))); 
+	return id;
 }
 #pragma endregion //FFI API
+

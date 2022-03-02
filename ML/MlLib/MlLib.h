@@ -136,6 +136,8 @@ namespace myk {
 		/// <returns></returns>
 		MLLIB_API Matrix add(const Matrix& lhs, double rhs) noexcept(false);
 
+		MLLIB_API Matrix operator+(const Matrix& lhs, double rhs) noexcept(false);
+
 		MLLIB_API Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 
 		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);
@@ -175,6 +177,14 @@ namespace myk {
 #else
 	using ID = uint16_t;
 #endif
+
+MLLIB_API UPtrMtx multiply(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false);
+
+MLLIB_API UPtrMtx add(const myk::UPtrMtx& lhs, double rhs) noexcept(false);
+
+MLLIB_API UPtrMtx operator*(const UPtrMtx& lhs, const  UPtrMtx& rhs) noexcept(false);
+
+MLLIB_API UPtrMtx operator+(const myk::UPtrMtx& lhs, double rhs) noexcept(false);
 } // myk namespace end
 
 
@@ -225,6 +235,14 @@ extern "C" {
 	/// <param name="rhs"></param>
 	/// <returns>行列オブジェクトのID</returns>
 	MLLIB_API myk::ID nativeDoMultiply(myk::ID, myk::ID);
+
+	/// <summary>
+	/// 行列にスカラー値を加算します。
+	/// </summary>
+	/// <param name="lId"></param>
+	/// <param name="value"></param>
+	/// <returns>行列オブジェクトのID</returns>
+	MLLIB_API myk::ID nativeDoAdd(myk::ID, double);
 
 	/// <summary>
 	/// IDの行を取得

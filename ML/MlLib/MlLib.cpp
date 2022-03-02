@@ -162,27 +162,6 @@ namespace myk::lib {
 		return newMatr;
 	}
 
-	// 行列積
-	myk::UPtrMtx multiply(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false) {
-		using namespace std::literals::string_literals;
-		if (lhs->CUL != rhs->ROW) {
-			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
-				+ "左辺 Matrix row = "s + std::to_string(lhs->ROW) + "cul = "s + std::to_string(lhs->CUL)
-				+ "右辺 Matrix row = "s + std::to_string(rhs->ROW) + "cul = "s + std::to_string(rhs->CUL);
-		}
-		std::make_unique<Matrix>(lhs->ROW, rhs->CUL);
-		myk::UPtrMtx newMatr = std::make_unique<Matrix>(lhs->ROW, rhs->CUL);
-		for (size_t r = 0; r < lhs->ROW; ++r) {
-			for (size_t c = 0; c < rhs->CUL; ++c) {
-				//    newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
-				for (size_t k = 0; k < lhs->CUL; ++k) {
-					newMatr->at(r, c) += lhs->read(r, k) * rhs->read(k, c);
-				}
-			}
-		}
-		return newMatr;
-	}
-
 	// 行列スカラー倍
 	Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
 		Matrix newMatrix(lhs.ROW, lhs.CUL);
@@ -216,10 +195,9 @@ namespace myk::lib {
 		return multiply(lhs, rhs);
 	}
 
-	myk::UPtrMtx operator*(const myk::UPtrMtx& lhs, const myk::UPtrMtx& rhs) noexcept(false) {
-		return multiply(lhs, rhs);
+	Matrix myk::lib::operator+(const Matrix & lhs, double rhs) noexcept(false) {
+		return add(lhs, rhs);
 	}
-
 
 	bool operator==(const Matrix& lhs, const Matrix& rhs) {
 		//shapeチェック
@@ -334,6 +312,45 @@ namespace myk {
 	};
 
 	ManageMTXObj ManageMTXObj::_instance;
+	// 行列積
+	myk::UPtrMtx multiply(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false) {
+		using namespace std::literals::string_literals;
+		if (lhs->CUL != rhs->ROW) {
+			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+				+ "左辺 Matrix row = "s + std::to_string(lhs->ROW) + "cul = "s + std::to_string(lhs->CUL)
+				+ "右辺 Matrix row = "s + std::to_string(rhs->ROW) + "cul = "s + std::to_string(rhs->CUL);
+		}
+		//std::make_unique<Matrix>(lhs->ROW, rhs->CUL);
+		myk::UPtrMtx newMatr = std::make_unique<Matrix>(lhs->ROW, rhs->CUL);
+		for (size_t r = 0; r < lhs->ROW; ++r) {
+			for (size_t c = 0; c < rhs->CUL; ++c) {
+				//    newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
+				for (size_t k = 0; k < lhs->CUL; ++k) {
+					newMatr->at(r, c) += lhs->read(r, k) * rhs->read(k, c);
+				}
+			}
+		}
+		return newMatr;
+	}
+
+	myk::UPtrMtx add(const myk::UPtrMtx& lhs, double rhs) noexcept(false) {
+		//myk::UPtrMtx neUPtrMtx = myk::UPtrMtx(lhs->ROW, lhs->CUL);
+		myk::UPtrMtx newMatr = std::make_unique<Matrix>(lhs->ROW, lhs->CUL);
+		for (size_t i = 0; i < lhs->ROW; ++i) {
+			for (size_t j = 0; j < lhs->CUL; ++j) {
+				newMatr->at(i, j) = lhs->read(i, j) + rhs;
+			}
+		}
+		return newMatr;
+	}
+
+	myk::UPtrMtx operator+(const myk::UPtrMtx& lhs, double rhs) noexcept(false) {
+		return add(lhs, rhs);
+	}
+
+	myk::UPtrMtx operator*(const myk::UPtrMtx& lhs, const myk::UPtrMtx& rhs) noexcept(false) {
+		return multiply(lhs, rhs);
+	}
 } // namespace myk end
 
 namespace myk {
@@ -405,6 +422,7 @@ myk::ID initNativeMatrix(double* arr, uint32_t len, uint32_t ROW, uint32_t CUL) 
 // 行列積を実行
 myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
 	using namespace myk::lib;
+	using namespace myk;
 	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
 	myk::UPtrMtx& upmL = mmo.getUPtrMtx(lhs);
 	myk::UPtrMtx& upmR = mmo.getUPtrMtx(rhs);
@@ -418,6 +436,15 @@ myk::ID nativeDoMultiply(myk::ID lhs, myk::ID rhs) {
 		std::cerr << "nativeDoMultiply() 関数 " << (__LINE__) - 6 << "行目\n"
 		<< e.what() << std::endl;
 	}
+}
+
+//スカラー値を加算
+myk::ID nativeDoAdd(myk::ID lId, double value) {
+	using namespace myk::lib;
+	using namespace myk;
+	myk::ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+	myk::UPtrMtx& upm = mmo.getUPtrMtx(lId);
+	return mmo.registMTXObj(add(upm, value));
 }
 
 uint32_t getROW(myk::ID id) {

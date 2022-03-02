@@ -138,6 +138,8 @@ namespace myk {
 
 		MLLIB_API Matrix operator+(const Matrix& lhs, double rhs) noexcept(false);
 
+		MLLIB_API Matrix operator+(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+
 		MLLIB_API Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false);
 
 		MLLIB_API bool operator==(const Matrix& lhs, const Matrix& rhs) noexcept(false);

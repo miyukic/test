@@ -141,7 +141,7 @@ namespace myk::lib {
 
 #pragma endregion // Matrixクラス
 
-#pragma region myk::libのグローバル関数
+#pragma region Matrixクラスに関するグローバル関数
 	// 行列積
 	Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
 		using namespace std::literals::string_literals;
@@ -191,11 +191,32 @@ namespace myk::lib {
 		return newMatrix;
 	}
 
+	// 行列同士の加算
+	Matrix add(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+		using namespace std::literals::string_literals;
+		if (lhs.ROW != rhs.ROW || lhs.CUL != rhs.CUL) {
+			throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+				+ "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
+				+ "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
+		}
+		Matrix newMatrix(lhs.ROW, lhs.CUL);
+		for (size_t i = 0; i < lhs.ROW; ++i) {
+			for (size_t j = 0; j < lhs.CUL; ++j) {
+				newMatrix.at(i, j) = lhs.read(i, j) + rhs.read(i, j);
+			}
+		}
+		return newMatrix;
+	}
+
 	Matrix operator*(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
 		return multiply(lhs, rhs);
 	}
 
 	Matrix myk::lib::operator+(const Matrix & lhs, double rhs) noexcept(false) {
+		return add(lhs, rhs);
+	}
+
+	Matrix myk::lib::operator+(const Matrix &lhs, const Matrix& rhs) noexcept(false) {
 		return add(lhs, rhs);
 	}
 
@@ -217,7 +238,7 @@ namespace myk::lib {
 		}
 		return true;
 	}
-#pragma endregion //myk::libのグローバル関数
+#pragma endregion //Matrixクラスに関するグローバル関数
 
 } //namespace end myk::lib
 namespace myk {
@@ -310,8 +331,9 @@ namespace myk {
 		ManageMTXObj() { _mtxList.reserve(_MATRIX_QUANTITY); }
 		~ManageMTXObj() = default;
 	};
-
 	ManageMTXObj ManageMTXObj::_instance;
+
+#pragma region UPtrMtx関係のグローバル関数
 	// 行列積
 	myk::UPtrMtx multiply(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false) {
 		using namespace std::literals::string_literals;
@@ -333,6 +355,7 @@ namespace myk {
 		return newMatr;
 	}
 
+	// スカラー加算
 	myk::UPtrMtx add(const myk::UPtrMtx& lhs, double rhs) noexcept(false) {
 		//myk::UPtrMtx neUPtrMtx = myk::UPtrMtx(lhs->ROW, lhs->CUL);
 		myk::UPtrMtx newMatr = std::make_unique<Matrix>(lhs->ROW, lhs->CUL);
@@ -344,13 +367,16 @@ namespace myk {
 		return newMatr;
 	}
 
+	// スカラー加算+演算子
 	myk::UPtrMtx operator+(const myk::UPtrMtx& lhs, double rhs) noexcept(false) {
 		return add(lhs, rhs);
 	}
 
+	// 行列積*演算子
 	myk::UPtrMtx operator*(const myk::UPtrMtx& lhs, const myk::UPtrMtx& rhs) noexcept(false) {
 		return multiply(lhs, rhs);
 	}
+#pragma region //UPtrMtx関係のグローバル関数
 } // namespace myk end
 
 namespace myk {

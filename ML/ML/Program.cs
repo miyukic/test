@@ -78,7 +78,7 @@ namespace Myk {
             public CMatrix(uint ROW, uint CUL, double value = 0.0) {
                 this.ROW = ROW;
                 this.CUL = CUL;
-                _id = NativeMethod.createNativeMatrix(ROW, CUL, value);
+                _id = NativeMethod.createNativeMatrixRCV(ROW, CUL, value);
             }
 
             /// <summary>
@@ -107,20 +107,20 @@ namespace Myk {
                 //ofType<TResult> Cast<TResult>
                 //https://referencesource.microsoft.com/#System.Core/System/Linq/Enumerable.cs,d25cf953c577dcd6
                 (IntPtr pInt, uint len) = CreateNativeDoubleArray(array);
-                _id = NativeMethod.initNativeMatrix(pInt, len, row, cul);
+                _id = NativeMethod.createNativeMatrixARC(pInt, len, row, cul);
             }
 
             public bool Print() {
-                return NativeMethod.matrixConsoleOutPut(_id);
+                return NativeMethod.nativeMatrixPrint(_id);
             }
 
             public static bool operator==(CMatrix lhs, CMatrix rhs) {
                 //Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
-                return Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
+                return Convert.ToBoolean(NativeMethod.nativeMatrixEquals(lhs.id, rhs.id));
             }
 
             public static bool operator!=(CMatrix lhs, CMatrix rhs) {
-                return !Convert.ToBoolean(NativeMethod.equals(lhs.id, rhs.id));
+                return !Convert.ToBoolean(NativeMethod.nativeMatrixEquals(lhs.id, rhs.id));
             }
 
             /// <summary>
@@ -130,7 +130,7 @@ namespace Myk {
             /// <param name="rhs"></param>
             /// <returns></returns>
             public static CMatrix Multiply(in CMatrix lhs, in CMatrix rhs) {
-                ID newid = NativeMethod.nativeDoMultiply(lhs.id, rhs.id);
+                ID newid = NativeMethod.nativeMatrixMultiply(lhs.id, rhs.id);
                 CMatrix newMat = new CMatrix(newid, lhs.ROW, rhs.CUL);
                 return newMat;
             }
@@ -160,19 +160,22 @@ namespace Myk {
             //C++の関数
             static class NativeMethod {
                 [DllImport("MlLib.dll")]
-                public static extern ID createNativeMatrix(uint ROW, uint CUL, double value);
+                public static extern ID createNativeMatrixRCV(uint ROW, uint CUL, double value);
 
                 [DllImport("MlLib.dll")]
-                public static extern ID initNativeMatrix(System.IntPtr arr, uint len, uint row, uint cul);
+                public static extern ID createNativeMatrixARC(System.IntPtr arr, uint len, uint row, uint cul);
 
                 [DllImport("MlLib.dll")]
-                public static extern ID nativeDoMultiply(ID lId, ID rId);
+                public static extern ID nativeMatrixMultiply(ID lId, ID rId);
 
                 [DllImport("MlLib.dll")]
-                public static extern bool matrixConsoleOutPut(ID id);
+                public static extern ID nativeMatrixAddSC(ID lId, double value);
 
                 [DllImport("MlLib.dll")]
-                public static extern BOOL equals(ID lId, ID rId);
+                public static extern bool nativeMatrixPrint(ID id);
+
+                [DllImport("MlLib.dll")]
+                public static extern BOOL nativeMatrixEquals(ID lId, ID rId);
 
             }
         }
@@ -434,6 +437,7 @@ namespace Myk {
         static void Main() {
             CMatrix cm  = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
             CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
+            
             Console.WriteLine(cm == cm2);
             #region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);

@@ -129,12 +129,44 @@ namespace Myk {
             /// <param name="lhs"></param>
             /// <param name="rhs"></param>
             /// <returns></returns>
-            public static CMatrix Multiply(in CMatrix lhs, in CMatrix rhs) {
+            public static CMatrix Multiply(CMatrix lhs, CMatrix rhs) {
                 ID newid = NativeMethod.nativeMatrixMultiply(lhs.id, rhs.id);
                 CMatrix newMat = new CMatrix(newid, lhs.ROW, rhs.CUL);
                 return newMat;
             }
+            public CMatrix Multiply(CMatrix cmx) {
+                return CMatrix.Multiply(this, cmx);
+            }
+            public static CMatrix operator *(CMatrix lhs, CMatrix rhs) {
+                return CMatrix.Multiply(lhs, rhs);
+            }
 
+            public static CMatrix Add(CMatrix lhs, CMatrix rhs) {
+                ID newid = NativeMethod.nativeMatrixAdd(lhs.id, rhs.id);
+                CMatrix newMat = new CMatrix(newid, lhs.ROW, rhs.CUL);
+                return newMat;
+
+            }
+            public static CMatrix Add(CMatrix lhs, in double rhs) {
+                ID newid = NativeMethod.nativeMatrixAddSC(lhs._id, rhs);
+                return new CMatrix(newid, lhs.ROW, lhs.CUL);
+            }
+
+            public CMatrix Add(in double rhs) {
+                return CMatrix.Add(this, rhs);
+            }
+
+            public static CMatrix operator +(CMatrix lhs, in double rhs) {
+                return CMatrix.Add(lhs, rhs);
+            }
+
+            public CMatrix Add(in CMatrix cmx) {
+                return CMatrix.Add(this, cmx);
+            }
+
+            public static CMatrix operator +(CMatrix lhs, CMatrix rhs) {
+                return Add(lhs, rhs);
+            }
 
             /// <summary>
             /// 配列からアンマネージド型の配列をメモリ上に生成しそのIntPtrと配列のサイズを返す
@@ -170,6 +202,9 @@ namespace Myk {
 
                 [DllImport("MlLib.dll")]
                 public static extern ID nativeMatrixAddSC(ID lId, double value);
+
+                [DllImport("MlLib.dll")]
+                public static extern ID nativeMatrixAdd(ID lId, ID rId);
 
                 [DllImport("MlLib.dll")]
                 public static extern bool nativeMatrixPrint(ID id);
@@ -354,6 +389,10 @@ namespace Myk {
         public static double Affine(Matrix1x2 x, Matrix2x1 w, double bias) {
             return x * w + bias;
         }
+        
+        public static CMatrix CAffine(in CMatrix x, in CMatrix w, in double bias) {
+            return CMatrix.Multiply(x, w) + bias;
+        }
 
         const double d = 1E-5D;
         const double dd = 1E-5D * 2;
@@ -496,7 +535,6 @@ namespace Myk {
             //Application.Run(new Form1());
 
         }
-
     }
 
 } // Myk namespace end

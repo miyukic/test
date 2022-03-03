@@ -114,6 +114,18 @@ namespace Myk {
                 return NativeMethod.nativeMatrixPrint(_id);
             }
 
+            public override bool Equals(Object? obj) {
+                if (obj == null || GetType() != obj.GetType()) {
+                    return false;
+                }
+                return GetHashCode() == obj.GetHashCode();
+            }
+
+            // override object.GetHashCode
+            public override int GetHashCode() {
+                return new { CUL, ROW, _id }.GetHashCode();
+            }
+
             public static bool operator==(CMatrix lhs, CMatrix rhs) {
                 //Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
                 return Convert.ToBoolean(NativeMethod.nativeMatrixEquals(lhs.id, rhs.id));

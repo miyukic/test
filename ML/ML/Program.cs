@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Myk {
     namespace Util {
-#region Experimental Code
+        #region Experimental Code
         class Seconds {
             int value;
             public Seconds(int v) {
@@ -25,7 +25,7 @@ namespace Myk {
                 return new Seconds(val.value / 60);
             }
         }
-        
+
         class Minutes {
             int value;
             public Minutes(int v) {
@@ -99,9 +99,9 @@ namespace Myk {
             /// </summary>
             /// <param name="array"></param>
             public CMatrix(in double[,] array2) {
-                uint row = (uint) array2.GetLength(0);
-                uint cul = (uint) array2.GetLength(1);
-                double[] array = 
+                uint row = (uint)array2.GetLength(0);
+                uint cul = (uint)array2.GetLength(1);
+                double[] array =
                     //array2.OfType<double>().ToArray();
                     array2.Cast<double>().ToArray();
                 //ofType<TResult> Cast<TResult>
@@ -126,12 +126,12 @@ namespace Myk {
                 return new { CUL, ROW, _id }.GetHashCode();
             }
 
-            public static bool operator==(CMatrix lhs, CMatrix rhs) {
+            public static bool operator ==(CMatrix lhs, CMatrix rhs) {
                 //Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
                 return Convert.ToBoolean(NativeMethod.nativeMatrixEquals(lhs.id, rhs.id));
             }
 
-            public static bool operator!=(CMatrix lhs, CMatrix rhs) {
+            public static bool operator !=(CMatrix lhs, CMatrix rhs) {
                 return !Convert.ToBoolean(NativeMethod.nativeMatrixEquals(lhs.id, rhs.id));
             }
 
@@ -186,7 +186,7 @@ namespace Myk {
             /// </summary>
             /// <param name="array"></param>
             /// <returns></returns>
-            private static (System.IntPtr, uint)CreateNativeDoubleArray(double[] array) {
+            private static (System.IntPtr, uint) CreateNativeDoubleArray(double[] array) {
                 int length = array.Length;
                 // 確保する配列のメモリサイズ（double型 × 長さ）  
                 int size = Marshal.SizeOf(typeof(double)) * length;
@@ -196,7 +196,7 @@ namespace Myk {
                 // C#の配列をアンマネージドメモリにコピーする  
                 Marshal.Copy(array, 0, ptr, length);
                 // C++に配列を渡す(ポインタを渡す)  
-                return (ptr, (uint) length);
+                return (ptr, (uint)length);
                 // アンマネージドのメモリを解放  
                 //Marshal.FreeCoTaskMem(ptr);
             }
@@ -232,7 +232,7 @@ namespace Myk {
         /// [x1, x2]
         /// </summary>
         public class Matrix1x2 {
-            private double[] x1x2 = new double[] {0, 0};
+            private double[] x1x2 = new double[] { 0, 0 };
 
             public Matrix1x2(double[] x1x2) {
                 this.x1x2 = x1x2;
@@ -249,7 +249,7 @@ namespace Myk {
                 return this.GetX1() * mat21.GetX1() + this.GetX2() * mat21.GetY1();
             }
 
-            public static double operator*(Matrix1x2 lhs, Matrix2x1 rhs) {
+            public static double operator *(Matrix1x2 lhs, Matrix2x1 rhs) {
                 return lhs.DotProduct(rhs);
             }
 
@@ -260,7 +260,7 @@ namespace Myk {
             }
 
             public override string ToString() {
-                return "{ " + GetX1() + ", " +GetX2() + " }";
+                return "{ " + GetX1() + ", " + GetX2() + " }";
             }
 
             public double GetX2() {
@@ -274,7 +274,7 @@ namespace Myk {
         /// [y1]
         /// </summary>
         public class Matrix2x1 {
-            private double[] x1y1 = new double[] {0, 0};
+            private double[] x1y1 = new double[] { 0, 0 };
 
             public Matrix2x1(double[] x1y1) {
                 this.x1y1 = x1y1;
@@ -304,19 +304,19 @@ namespace Myk {
                 return new Matrix2x1(new double[] { x1, y1 });
             }
             public override string ToString() {
-                return "{ " + GetX1() + ", " +GetY1() + " }";
+                return "{ " + GetX1() + ", " + GetY1() + " }";
             }
 
-            public static Matrix2x1 operator+(Matrix2x1 lhs, Matrix2x1 rhs) {
+            public static Matrix2x1 operator +(Matrix2x1 lhs, Matrix2x1 rhs) {
                 return lhs.add(rhs);
             }
 
-            public static Matrix2x1 operator+(Matrix2x1 lhs, double rhs) {
+            public static Matrix2x1 operator +(Matrix2x1 lhs, double rhs) {
                 return lhs.add(rhs);
             }
 
         }
-#endregion
+        #endregion
     } // Myk.Lib namespace end
 
     // ノードを表すクラス。h
@@ -340,9 +340,9 @@ namespace Myk {
         }
     }
     class Program {
-#region data
+        #region data
         const double E = 2.71828182846;
-        static readonly double[] 教師データ = { 
+        static readonly double[] 教師データ = {
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D,
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D,
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D,
@@ -361,11 +361,11 @@ namespace Myk {
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D,
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D
     };
-#endregion
+        #endregion
         // 初期バイアス
-        static double bias = 1; 
+        static double bias = 1;
         // 初期重み
-        static Matrix2x1 weightW1W2 = new Matrix2x1(new double[] {1D, 1D}).Multiply(学習率);
+        static Matrix2x1 weightW1W2 = new Matrix2x1(new double[] { 1D, 1D }).Multiply(学習率);
         // 学習率
         const double 学習率 = 0.5D;
         // 初期入力(x1, x2)
@@ -401,7 +401,7 @@ namespace Myk {
         public static double Affine(Matrix1x2 x, Matrix2x1 w, double bias) {
             return x * w + bias;
         }
-        
+
         public static CMatrix CAffine(in CMatrix x, in CMatrix w, in double bias) {
             return CMatrix.Multiply(x, w) + bias;
         }
@@ -425,7 +425,7 @@ namespace Myk {
         /// <returns>傾き</returns>
         public static decimal Bibun(decimal x, Func<decimal, decimal> f) {
             var d = 1E-7M;
-            return (f(x + d) - f(x - d)) / (2*d);
+            return (f(x + d) - f(x - d)) / (2 * d);
         }
 
         /// <summary>
@@ -468,27 +468,27 @@ namespace Myk {
             if (0 >= count) return;
             if (教師データ.Length < count) Console.WriteLine(
                 "学習回数が多すぎます。/n学習データは " + 教師データ.Length + " 個なのでそれ以下に設定してください。");
-            double  output      = StepFunc(Affine(paraX1X2, weight, bias));
-            var     dE          = 教師データ[教師データ.Length - count] - output;
-            var     dWeight     = weight.Multiply(dE * 学習率);
-            var     dBias       = dE * 学習率 * bias;
-            var     newWeight   = dWeight + weight;
-            var     newBias     = dBias + bias;
-            Console.WriteLine("出力= "          + output);
-            Console.WriteLine("dE= "            + dE);
-            Console.WriteLine("dWeight= "       + dWeight);
-            Console.WriteLine("dBias= "         + dBias);
-            Console.WriteLine("newWeight= "     + newWeight);
-            Console.WriteLine("newBias= "       + newBias);
+            double output = StepFunc(Affine(paraX1X2, weight, bias));
+            var dE = 教師データ[教師データ.Length - count] - output;
+            var dWeight = weight.Multiply(dE * 学習率);
+            var dBias = dE * 学習率 * bias;
+            var newWeight = dWeight + weight;
+            var newBias = dBias + bias;
+            Console.WriteLine("出力= " + output);
+            Console.WriteLine("dE= " + dE);
+            Console.WriteLine("dWeight= " + dWeight);
+            Console.WriteLine("dBias= " + dBias);
+            Console.WriteLine("newWeight= " + newWeight);
+            Console.WriteLine("newBias= " + newBias);
             Console.WriteLine("================学習残り " + (count - 1) + " 回===========================");
             Routine(newWeight, newBias, --count);
         }
 
         [STAThread]
         static void Main() {
-            CMatrix cm  = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
+            CMatrix cm = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
             CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
-            
+
             Console.WriteLine(cm == cm2);
             #region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);

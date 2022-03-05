@@ -31,7 +31,6 @@
 #endif
 
 
-
 #pragma region cpp 
 namespace myk::lib {
 #pragma region Matrixクラスの実装
@@ -540,5 +539,12 @@ myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs) {
     ID id = mmo.registMTXObj(std::move(add(l, r)));
     return id;
 }
+
+CsObject object = { 10, 21 };
+
+void getCsObject(CsObject* obj) {
+    obj->x = 10;
+}
+
 #pragma endregion //FFI API
 

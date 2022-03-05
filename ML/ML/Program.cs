@@ -392,6 +392,15 @@ namespace Myk {
         }
 
         /// <summary>
+        /// ReLu関数
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static double ReLu(double x) {
+            return Math.Max(x, 0);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="x"></param>
@@ -468,12 +477,12 @@ namespace Myk {
             if (0 >= count) return;
             if (教師データ.Length < count) Console.WriteLine(
                 "学習回数が多すぎます。/n学習データは " + 教師データ.Length + " 個なのでそれ以下に設定してください。");
-            double output = StepFunc(Affine(paraX1X2, weight, bias));
-            var dE = 教師データ[教師データ.Length - count] - output;
-            var dWeight = weight.Multiply(dE * 学習率);
-            var dBias = dE * 学習率 * bias;
-            var newWeight = dWeight + weight;
-            var newBias = dBias + bias;
+            double output   = StepFunc(Affine(paraX1X2, weight, bias));
+            var dE          = 教師データ[教師データ.Length - count] - output;
+            var dWeight     = weight.Multiply(dE * 学習率);
+            var dBias       = dE * 学習率 * bias;
+            var newWeight   = dWeight + weight;
+            var newBias     = dBias + bias;
             Console.WriteLine("出力= " + output);
             Console.WriteLine("dE= " + dE);
             Console.WriteLine("dWeight= " + dWeight);
@@ -484,12 +493,20 @@ namespace Myk {
             Routine(newWeight, newBias, --count);
         }
 
+
         [STAThread]
         static void Main() {
-            CMatrix cm = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
-            CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
+            //CMatrix cm = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
+            //CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
 
-            Console.WriteLine(cm == cm2);
+            CsObject obj = new CsObject{x=1, y=2};
+
+            //Console.WriteLine(cm == cm2);
+            CsObject retObject = new CsObject();
+            NativeMethod.getCsObject(ref retObject);
+            Console.WriteLine(retObject.x);
+            
+
             #region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
@@ -552,7 +569,17 @@ namespace Myk {
 } // Myk namespace end
 
 public static class NativeMethod {
+    public static IntPtr createNativeStruct<T>(T value)
+        where T : struct
+    {
+            System.IntPtr Ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
+            Marshal.StructureToPtr(value, Ptr, false);
+        return Ptr;
+    }
+
     [DllImport("MlLib.dll")]
-    public static extern int fnMlLib();
+    public static extern void fnMlLib();
+    [DllImport("MlLib.dll")]
+    public static extern void getCsObject(ref Myk.CsObject retObj);
 }
 #endif

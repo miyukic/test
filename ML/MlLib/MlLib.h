@@ -23,6 +23,16 @@ typedef int BOOL;
 #include <string>
 #include <memory>
 
+extern "C" {
+    struct CsObject {
+        int x;
+        int y;
+    };
+
+
+    MLLIB_API void getCsObject(CsObject* obj);
+}
+
 namespace myk {
     namespace lib {
 

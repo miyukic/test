@@ -28,9 +28,16 @@ struct MLLIB_API CsObject {
     int y;
 };
 
+struct MLLIB_API Info {
+    int    index;
+    char   name[128];
+    int    statuses[50];
+};
+
 extern "C" {
     MLLIB_API void getCsObject(CsObject* obj);
     MLLIB_API int* getArray();
+    MLLIB_API Info* getInfoStruct();
 }
 
 namespace myk {

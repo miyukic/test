@@ -421,6 +421,14 @@ int* getArray() {
     return arr;
 }
 
+Info info = { 333, "あいうえお", {2, 3, 4, 10} };
+
+Info* getInfoStruct() {
+    return &info;
+}
+
+
+
 
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
     return myk::lib::Matrix(ROW, CUL);

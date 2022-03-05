@@ -501,13 +501,19 @@ namespace Myk {
             //CsObject retObject = new CsObject();
             //NativeMethod.getCsObject(ref retObject);
             //Console.WriteLine(retObject.x);
-            
-            IntPtr pArray = NativeMethod.getArray();
-            int[] array = new int[5];
-            Marshal.Copy(pArray, array, 0, array.Length);
-            foreach (int i in array) {
-                Console.WriteLine(i);
-            }
+
+            //IntPtr pArray = NativeMethod.getArray();
+            //int[] array = new int[5];
+            //Marshal.Copy(pArray, array, 0, array.Length);
+            //foreach (int i in array) {
+            //    Console.WriteLine(i);
+            //}
+
+            IntPtr ptr = NativeMethod.getInfoStruct();
+            Info? info = (Info?) Marshal.PtrToStructure(ptr, typeof(Info));
+            Console.WriteLine(info?.index);
+            Console.WriteLine(info?.name);
+
 
 
             #region テストコード
@@ -572,7 +578,8 @@ namespace Myk {
 } // Myk namespace end
 
 public static class NativeMethod {
-    public static IntPtr createNativeStruct<T>(T value)
+    
+    public static IntPtr CreateNativeStruct<T>(T value)
         where T : struct
     {
             System.IntPtr Ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
@@ -587,5 +594,8 @@ public static class NativeMethod {
 
     [DllImport("MlLib.dll")]
     public static extern IntPtr getArray();
+     
+    [DllImport("MlLib.dll")]
+    public static extern IntPtr getInfoStruct();
 }
 #endif

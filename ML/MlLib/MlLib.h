@@ -32,6 +32,7 @@ struct MLLIB_API Info {
     int    index;
     char   name[128];
     int    statuses[50];
+    int* array;
 };
 
 extern "C" {

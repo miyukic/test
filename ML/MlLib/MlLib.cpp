@@ -421,9 +421,12 @@ int* getArray() {
     return arr;
 }
 
-Info info = { 333, "あいうえお", {2, 3, 4, 10} };
+Info info = { 333, "あいうえお", {2, 3, 4, 10}, new int[30]};
 
 Info* getInfoStruct() {
+    for (size_t i = 0; i < 30; ++i) {
+        info.array[i] = i;
+    }
     return &info;
 }
 

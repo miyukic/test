@@ -510,9 +510,15 @@ namespace Myk {
             //}
 
             IntPtr ptr = NativeMethod.getInfoStruct();
-            Info? info = (Info?) Marshal.PtrToStructure(ptr, typeof(Info));
-            Console.WriteLine(info?.index);
-            Console.WriteLine(info?.name);
+            Info info = (Info) Marshal.PtrToStructure(ptr, typeof(Info));
+            Console.WriteLine(info.index);
+            Console.WriteLine(info.name);
+            IntPtr parr = info.array;
+            double[] array = new double[30];
+            Marshal.Copy(parr, array, 0, array.Length);
+            foreach (double d in array) {
+                Console.WriteLine(d);
+            }
 
 
 

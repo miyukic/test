@@ -23,6 +23,7 @@ namespace Myk {
         // uint, ulong, float, double配列の場合は属性を付けずに以下のようにしても良い
         // この場合は配列のインスタンスを作成する必要は無い。→これはunsafeブロック中でしか使えないらしい・・・
         // public fixed int statuses[50];
+        public IntPtr array;
     }
     //publiv struct CsMatrixObject {
     //    int y;

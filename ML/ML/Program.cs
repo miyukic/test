@@ -108,6 +108,7 @@ namespace Myk {
                 //https://referencesource.microsoft.com/#System.Core/System/Linq/Enumerable.cs,d25cf953c577dcd6
                 (IntPtr pInt, uint len) = CreateNativeDoubleArray(array);
                 _id = NativeMethod.createNativeMatrixARC(pInt, len, row, cul);
+                Marshal.FreeCoTaskMem(pInt);
             }
 
             public bool Print() {
@@ -496,16 +497,18 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
-            //CMatrix cm = new CMatrix(new double[3, 3] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } });
-            //CMatrix cm2 = new CMatrix(new double[2, 3] { { 1, 2, 3 }, { 1, 2, 3 } });
-
-            CsObject obj = new CsObject{x=1, y=2};
-
-            //Console.WriteLine(cm == cm2);
-            CsObject retObject = new CsObject();
-            NativeMethod.getCsObject(ref retObject);
-            Console.WriteLine(retObject.x);
+            //CsObject obj = new CsObject{x=1, y=2};
+            //CsObject retObject = new CsObject();
+            //NativeMethod.getCsObject(ref retObject);
+            //Console.WriteLine(retObject.x);
             
+            IntPtr pArray = NativeMethod.getArray();
+            int[] array = new int[5];
+            Marshal.Copy(pArray, array, 0, array.Length);
+            foreach (int i in array) {
+                Console.WriteLine(i);
+            }
+
 
             #region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);
@@ -581,5 +584,8 @@ public static class NativeMethod {
     public static extern void fnMlLib();
     [DllImport("MlLib.dll")]
     public static extern void getCsObject(ref Myk.CsObject retObj);
+
+    [DllImport("MlLib.dll")]
+    public static extern IntPtr getArray();
 }
 #endif

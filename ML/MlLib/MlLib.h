@@ -23,14 +23,14 @@ typedef int BOOL;
 #include <string>
 #include <memory>
 
+struct MLLIB_API CsObject {
+    int x;
+    int y;
+};
+
 extern "C" {
-    struct CsObject {
-        int x;
-        int y;
-    };
-
-
     MLLIB_API void getCsObject(CsObject* obj);
+    MLLIB_API int* getArray();
 }
 
 namespace myk {

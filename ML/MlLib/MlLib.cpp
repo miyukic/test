@@ -408,6 +408,20 @@ namespace myk {
     }
 }
 
+void getCsObject(CsObject* obj) {
+    obj->x = 10;
+}
+
+int* getArray() {
+    int t[] = {1, 2, 3, 4, 10};
+    int* arr = new int[5];
+    for (size_t i = 0; i < 5; ++i) {
+        arr[i] = t[i];
+    }
+    return arr;
+}
+
+
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
     return myk::lib::Matrix(ROW, CUL);
 }
@@ -540,11 +554,6 @@ myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs) {
     return id;
 }
 
-CsObject object = { 10, 21 };
-
-void getCsObject(CsObject* obj) {
-    obj->x = 10;
-}
 
 #pragma endregion //FFI API
 

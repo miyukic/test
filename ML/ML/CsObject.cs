@@ -12,13 +12,13 @@ namespace Myk {
         public int y;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct MatrixObjFromC {
         [MarshalAs(UnmanagedType.I4)]
         public int size;
         public ID id;
         public uint ROW, CUL;
-        public double[] array;
+        public IntPtr array;
     }
        // public MatrixObjFromC(int size) {
        //     this.size = size;

@@ -408,8 +408,16 @@ namespace myk {
     }
 }
 
+#pragma region テスト関数
+
 void getCsObject(CsObject* obj) {
     obj->x = 10;
+}
+
+void writeManagedArray(int len, double* parr) {
+    for (size_t i = 0; i < len; ++i) {
+        parr[i] = i;
+    }
 }
 
 int* getArray() {
@@ -431,11 +439,10 @@ Info* getInfoStruct() {
 }
 
 
-
-
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
     return myk::lib::Matrix(ROW, CUL);
 }
+#pragma endregion //テスト関数
 
 #pragma endregion
 
@@ -565,6 +572,20 @@ myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs) {
     return id;
 }
 
+myk::MatrixObjFromC* getNativeMatrix(myk::ID id) {
+    myk::MatrixObjFromC* mofc = new myk::MatrixObjFromC();
+    mofc->array = new double[20];
+    for (size_t i = 0; i < 20; ++i) {
+        mofc->array[i] = i;
+    }
+    return mofc;
+}
+
+void sendMatrix(myk::MatrixObjFromC* obj) {
+    for (size_t i = 0; i < 20; ++i) {
+        obj->array[i] = i;
+    }
+}
 
 #pragma endregion //FFI API
 

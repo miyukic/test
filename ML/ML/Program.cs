@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 using System.Linq;
 
 
+using ID = System.UInt16;
+using BOOL = System.Int32;
 namespace Myk {
-    using ID = System.UInt16;
-    using BOOL = System.Int32;
     namespace Util {
         #region Experimental Code
         class Seconds {
@@ -504,17 +504,27 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
+
+
+
+            //C++側の構造体のポインターをC#側に持ってきていろいろしてる
             IntPtr ptr = NativeMethod.getNativeMatrix(32);
             MatrixObjFromC mofc = (Myk.MatrixObjFromC) Marshal.PtrToStructure(ptr, typeof(Myk.MatrixObjFromC));
-            foreach (double i in mofc.array) {
-                Console.WriteLine("mofc.array " + i);
+            IntPtr parr = mofc.array;
+            double[] array = new double[20];
+            Marshal.Copy(parr, array, 0, array.Length);
+            foreach (double v in array) {
+                Console.WriteLine(v);
             }
 
+
+            #region 構造体・配列受け渡しテスト
             //CsObject obj = new CsObject{x=1, y=2};
             //CsObject retObject = new CsObject();
             //NativeMethod.getCsObject(ref retObject);
             //Console.WriteLine(retObject.x);
 
+            //C++側で生成した配列をC#に持ってきてマネージ配列にコピーしてアクセス
             //IntPtr pArray = NativeMethod.getArray();
             //int[] array = new int[5];
             //Marshal.Copy(pArray, array, 0, array.Length);
@@ -541,6 +551,7 @@ namespace Myk {
             //    Console.WriteLine(i);
             //}
 
+            #endregion //構造体・配列受け渡しテスト
 
 
             #region テストコード
@@ -606,10 +617,13 @@ namespace Myk {
 
 public static class NativeMethod {
 
+    [DllImport("MlLib.dll")]
+    public static extern void sendMatrix(ref Myk.MatrixObjFromC obj);
 
     [DllImport("MlLib.dll")]
-    public static extern IntPtr getNativeMatrix(System.Int16 id);
+    public static extern IntPtr getNativeMatrix(ID id);
 
+    #region テストコード
     [DllImport("MlLib.dll")]
     public static extern void fnMlLib();
     [DllImport("MlLib.dll")]
@@ -623,5 +637,6 @@ public static class NativeMethod {
 
     [DllImport("MlLib.dll")]
     public static extern void writeManagedArray(int len, double[] parr);
+    #endregion
 }
 #endif

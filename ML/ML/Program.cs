@@ -10,6 +10,8 @@ using System.Linq;
 
 
 namespace Myk {
+    using ID = System.UInt16;
+    using BOOL = System.Int32;
     namespace Util {
         #region Experimental Code
         class Seconds {
@@ -60,8 +62,6 @@ namespace Myk {
     }　// .Util namespace end
     namespace Lib {
         #region Matrix
-        using ID = System.UInt16;
-        using BOOL = System.Int32;
         // C++で実装されたMatrixクラスの薄いラッパークラス
         class CMatrix {
             public uint ROW { get; }
@@ -494,9 +494,22 @@ namespace Myk {
             Routine(newWeight, newBias, --count);
         }
 
+        public static IntPtr CreateNativeStruct<T>(T value)
+            where T : struct
+        {
+                System.IntPtr Ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
+                Marshal.StructureToPtr(value, Ptr, false);
+            return Ptr;
+        }
 
         [STAThread]
         static void Main() {
+            IntPtr ptr = NativeMethod.getNativeMatrix(32);
+            MatrixObjFromC mofc = (Myk.MatrixObjFromC) Marshal.PtrToStructure(ptr, typeof(Myk.MatrixObjFromC));
+            foreach (double i in mofc.array) {
+                Console.WriteLine("mofc.array " + i);
+            }
+
             //CsObject obj = new CsObject{x=1, y=2};
             //CsObject retObject = new CsObject();
             //NativeMethod.getCsObject(ref retObject);
@@ -509,16 +522,24 @@ namespace Myk {
             //    Console.WriteLine(i);
             //}
 
-            IntPtr ptr = NativeMethod.getInfoStruct();
-            Info info = (Info) Marshal.PtrToStructure(ptr, typeof(Info));
-            Console.WriteLine(info.index);
-            Console.WriteLine(info.name);
-            IntPtr parr = info.array;
-            double[] array = new double[30];
-            Marshal.Copy(parr, array, 0, array.Length);
-            foreach (double d in array) {
-                Console.WriteLine(d);
-            }
+            // C++側の構造体のポインターをC#側に持ってきていろいろしてる
+            //IntPtr ptr = NativeMethod.getInfoStruct();
+            //Info info = (Info) Marshal.PtrToStructure(ptr, typeof(Info));
+            //Console.WriteLine(info.index);
+            //Console.WriteLine(info.name);
+            //IntPtr parr = info.array;
+            //double[] array = new double[30];
+            //Marshal.Copy(parr, array, 0, array.Length);
+            //foreach (double d in array) {
+            //    Console.WriteLine(d);
+            //}
+
+            //int len = 10;
+            //double[] marray = new double[len];
+            //NativeMethod.writeManagedArray(len, marray);
+            //foreach (double i in marray) { 
+            //    Console.WriteLine(i);
+            //}
 
 
 
@@ -584,14 +605,10 @@ namespace Myk {
 } // Myk namespace end
 
 public static class NativeMethod {
-    
-    public static IntPtr CreateNativeStruct<T>(T value)
-        where T : struct
-    {
-            System.IntPtr Ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
-            Marshal.StructureToPtr(value, Ptr, false);
-        return Ptr;
-    }
+
+
+    [DllImport("MlLib.dll")]
+    public static extern IntPtr getNativeMatrix(System.Int16 id);
 
     [DllImport("MlLib.dll")]
     public static extern void fnMlLib();
@@ -603,5 +620,8 @@ public static class NativeMethod {
      
     [DllImport("MlLib.dll")]
     public static extern IntPtr getInfoStruct();
+
+    [DllImport("MlLib.dll")]
+    public static extern void writeManagedArray(int len, double[] parr);
 }
 #endif

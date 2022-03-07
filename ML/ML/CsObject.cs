@@ -6,10 +6,27 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Myk {
+    using ID = System.UInt16;
     public struct CsObject {
         public int x;
         public int y;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MatrixObjFromC {
+        [MarshalAs(UnmanagedType.I4)]
+        public int size;
+        public ID id;
+        public uint ROW, CUL;
+        public double[] array;
+    }
+       // public MatrixObjFromC(int size) {
+       //     this.size = size;
+       //     id = 0;
+       //     ROW = 0;
+       //     CUL = 0;
+       //     array = new double[50];
+       // }
 
     [StructLayout(LayoutKind.Sequential)]    // メンバーは定義順に格納される
     public struct Info {

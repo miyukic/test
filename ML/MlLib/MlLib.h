@@ -34,14 +34,16 @@ struct MLLIB_API Info {
     int    statuses[50];
     int* array;
 };
-
 extern "C" {
+    MLLIB_API void writeManagedArray(int len, double* parr);
     MLLIB_API void getCsObject(CsObject* obj);
     MLLIB_API int* getArray();
     MLLIB_API Info* getInfoStruct();
 }
 
 namespace myk {
+
+
     namespace lib {
 
         class MLLIB_API Matrix {
@@ -210,6 +212,15 @@ namespace myk {
     MLLIB_API UPtrMtx operator+(const UPtrMtx& lhs, double rhs) noexcept(false);
 
     MLLIB_API UPtrMtx operator+(const UPtrMtx& lhs, const UPtrMtx& rhs) noexcept(false);
+
+    // 行列をC#側に渡す用の構造体
+    struct MLLIB_API MatrixObjFromC {
+        int size;
+        myk::ID id;
+        uint32_t ROW, CUL;
+        double* array;
+    };
+
 } // myk namespace end
 
 
@@ -303,6 +314,16 @@ extern "C" {
     /// <param name="lhs"></param>
     /// <param name="rhs"></param>
     MLLIB_API myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs);
+
+    /// <summary>
+    /// 行列を渡す
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    MLLIB_API myk::MatrixObjFromC* getNativeMatrix(myk::ID id);
+
+    
+    MLLIB_API void sendMatrix(myk::MatrixObjFromC* obj);
 #ifdef __cplusplus
 }
 #endif

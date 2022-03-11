@@ -233,12 +233,9 @@ namespace Myk {
         /// <summary>
         /// 汎用行列クラス
         /// </summary>
-        public class Matrix<T>
-            where T :
-            IComparable<double>, IComparable<float>,
-            IComparable<int>, IComparable<uint> {
+        public class Matrix {
 
-            private T[,] matrix;
+            private double[,] matrix;
             public uint ROW { get; } = 1;
             public uint CUL { get; } = 1;
 
@@ -250,9 +247,9 @@ namespace Myk {
 
             // コンストラクタ
             public Matrix(uint row, uint cul, double value) {
-                ROW = row;
-                CUL = cul;
-                matrix = new T[row, cul];
+                this.ROW = row;
+                this.CUL = cul;
+                matrix = new double[row, cul];
             }
     
 
@@ -287,22 +284,22 @@ namespace Myk {
     //    ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
 
     // 行と列を指定してその要素の参照を取得（書き換え可）
-    public ref T at(uint row, uint cul) {
+    public ref double At(uint row, uint cul) {
         return ref matrix[row, cul];
     }
 
     // 行と列を指定してvalueで書き換えます
-    public void at(uint row, uint cul, T value) {
+    public void At(uint row, uint cul, double value) {
         matrix[row, cul] = value;
     }
 
     // 行と列を指定してその要素の値を取得（変更不可）
-    public T read(uint row, uint cul) {
+    public double Read(uint row, uint cul) {
             return matrix[row, cul];
     }
 
             // Matrixの内容を出力する
-            public string print() {
+            public string Print() {
                 const string hazime = "{";
                 const string owari = "}";
                 const string margin = " ";
@@ -344,100 +341,100 @@ namespace Myk {
             //uint32_t Matrix::test() {
             //    return 321 * 42 + 12 * 3;
             //}
-            public static Matrix<T> multiply(Matrix<T> lhs, Matrix<T> rhs) {
-            if (lhs.CUL != rhs.ROW) {
-            throw new System.Exception("計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
-                + "左辺 Matrix row = " + lhs.ROW + "cul = " + lhs.CUL
-                + "右辺 Matrix row = " + rhs.ROW + "cul = " + rhs.CUL);
+            public static Matrix Multiply(Matrix lhs, Matrix rhs) {
+                if (lhs.CUL != rhs.ROW) {
+                    throw new System.Exception("計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+                        + "左辺 Matrix row = " + lhs.ROW + "cul = " + lhs.CUL
+                        + "右辺 Matrix row = " + rhs.ROW + "cul = " + rhs.CUL);
                 }
-            Matrix<T> newMatr = new(lhs.ROW, rhs.CUL);
-        for (int r = 0; r<lhs.ROW; ++r) {
-            for (int c = 0; c<rhs.CUL; ++c) {
-                //	newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
-                for (int k = 0; k<lhs.CUL; ++k) {
-                    newMatr.at(r, c) += lhs.read(r, k)* rhs.read(k, c);
-}
+                Matrix newMatr = new(lhs.ROW, rhs.CUL);
+                for (uint r = 0; r < lhs.ROW; ++r) {
+                    for (uint c = 0; c < rhs.CUL; ++c) {
+                        //	newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
+                        for (uint k = 0; k < lhs.CUL; ++k) {
+                            newMatr.At(r, c) += lhs.Read(r, k) * rhs.Read(k, c);
+                        }
+                    }
+                }
+                return newMatr;
             }
-        }
-        return newMatr;
-    }
 
-//    // 行列スカラー倍
-//    Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
-//    Matrix newMatrix(lhs.ROW, lhs.CUL);
-//    auto r = lhs.ROW;
-//    auto c = lhs.CUL;
-//    for (size_t i = 0; i < lhs.ROW; ++i) {
-//        for (size_t j = 0; j < lhs.CUL; ++j) {
-//            try {
-//                newMatrix.at(i, j)
-//                    = lhs.read(i, j) * rhs;
-//            } catch (std::out_of_range&e) {
-//        std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
-//    }
-//}
-//        }
-//        return newMatrix;
-//    }
+            //    // 行列スカラー倍
+            //    Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
+            //    Matrix newMatrix(lhs.ROW, lhs.CUL);
+            //    auto r = lhs.ROW;
+            //    auto c = lhs.CUL;
+            //    for (size_t i = 0; i < lhs.ROW; ++i) {
+            //        for (size_t j = 0; j < lhs.CUL; ++j) {
+            //            try {
+            //                newMatrix.at(i, j)
+            //                    = lhs.read(i, j) * rhs;
+            //            } catch (std::out_of_range&e) {
+            //        std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
+            //    }
+            //}
+            //        }
+            //        return newMatrix;
+            //    }
 
-//    // 行列各要素に加算する
-//    Matrix add(const Matrix& lhs, double rhs) noexcept(false) {
-//    Matrix newMatrix(lhs.ROW, lhs.CUL);
-//    for (size_t i = 0; i < lhs.ROW; ++i) {
-//        for (size_t j = 0; j < lhs.CUL; ++j) {
-//            newMatrix.at(i, j) = lhs.read(i, j) + rhs;
-//        }
-//    }
-//    return newMatrix;
-//}
+            //    // 行列各要素に加算する
+            //    Matrix add(const Matrix& lhs, double rhs) noexcept(false) {
+            //    Matrix newMatrix(lhs.ROW, lhs.CUL);
+            //    for (size_t i = 0; i < lhs.ROW; ++i) {
+            //        for (size_t j = 0; j < lhs.CUL; ++j) {
+            //            newMatrix.at(i, j) = lhs.read(i, j) + rhs;
+            //        }
+            //    }
+            //    return newMatrix;
+            //}
 
-//// 行列同士の加算
-//Matrix add(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-//    using namespace std::literals::string_literals;
-//        if (lhs.ROW != rhs.ROW || lhs.CUL != rhs.CUL) {
-//            throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
-//                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
-//                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
-//        }
-//        Matrix newMatrix(lhs.ROW, lhs.CUL);
-//for (size_t i = 0; i < lhs.ROW; ++i) {
-//    for (size_t j = 0; j < lhs.CUL; ++j) {
-//        newMatrix.at(i, j) = lhs.read(i, j) + rhs.read(i, j);
-//    }
-//}
-//return newMatrix;
-//    }
+            //// 行列同士の加算
+            //Matrix add(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+            //    using namespace std::literals::string_literals;
+            //        if (lhs.ROW != rhs.ROW || lhs.CUL != rhs.CUL) {
+            //            throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+            //                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
+            //                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
+            //        }
+            //        Matrix newMatrix(lhs.ROW, lhs.CUL);
+            //for (size_t i = 0; i < lhs.ROW; ++i) {
+            //    for (size_t j = 0; j < lhs.CUL; ++j) {
+            //        newMatrix.at(i, j) = lhs.read(i, j) + rhs.read(i, j);
+            //    }
+            //}
+            //return newMatrix;
+            //    }
 
-//    Matrix operator *(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-//    return multiply(lhs, rhs);
-//}
+            //    Matrix operator *(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+            //    return multiply(lhs, rhs);
+            //}
 
-//Matrix myk::lib::operator +(const Matrix& lhs, double rhs) noexcept(false) {
-//    return add(lhs, rhs);
-//}
+            //Matrix myk::lib::operator +(const Matrix& lhs, double rhs) noexcept(false) {
+            //    return add(lhs, rhs);
+            //}
 
-//Matrix myk::lib::operator +(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-//    return add(lhs, rhs);
-//}
+            //Matrix myk::lib::operator +(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+            //    return add(lhs, rhs);
+            //}
 
-//bool operator ==(const Matrix& lhs, const Matrix& rhs) {
-//    //shapeチェック
-//    if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
-//    for (size_t i = 0; i < lhs.ROW; ++i) {
-//        for (size_t j = 0; j < lhs.CUL; ++j) {
-//            //全要素チェック
-//            try {
-//                if (lhs.read(i, j) != rhs.read(i, j)) return false;
-//            } catch (std::out_of_range&e) {
-//        std::cerr <<
-//            "operator==(const Matrix&, const Matrix&)で例外が発生しました。:" <<
-//            e.what() << std::endl;
-//        //return false;
-//            }
-//        }
-//                }
-//                return true;
-//            }
+            //bool operator ==(const Matrix& lhs, const Matrix& rhs) {
+            //    //shapeチェック
+            //    if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
+            //    for (size_t i = 0; i < lhs.ROW; ++i) {
+            //        for (size_t j = 0; j < lhs.CUL; ++j) {
+            //            //全要素チェック
+            //            try {
+            //                if (lhs.read(i, j) != rhs.read(i, j)) return false;
+            //            } catch (std::out_of_range&e) {
+            //        std::cerr <<
+            //            "operator==(const Matrix&, const Matrix&)で例外が発生しました。:" <<
+            //            e.what() << std::endl;
+            //        //return false;
+            //            }
+            //        }
+            //                }
+            //                return true;
+            //            }
         }
 
         /// <summary>

@@ -11,6 +11,8 @@ using System.Linq;
 
 using ID = System.UInt16;
 using BOOL = System.Int32;
+using System.Text;
+
 namespace Myk {
     namespace Util {
         #region Experimental Code
@@ -226,6 +228,216 @@ namespace Myk {
                 public static extern BOOL nativeMatrixEquals(ID lId, ID rId);
 
             }
+        }
+
+        /// <summary>
+        /// 汎用行列クラス
+        /// </summary>
+        public class Matrix<T>
+            where T :
+            IComparable<double>, IComparable<float>,
+            IComparable<int>, IComparable<uint> {
+
+            private T[,] matrix;
+            public uint ROW { get; } = 1;
+            public uint CUL { get; } = 1;
+
+            // コンストラクタ
+            // 要素は初期化しない
+            public Matrix(uint row, uint cul) : this(row, cul, 0.0F) { }
+
+            //Matrix::Matrix(uint32_t row, uint32_t cul) : ROW{ row }, CUL{ cul }, matrix(row, std::vector<double>(cul)) { }
+
+            // コンストラクタ
+            public Matrix(uint row, uint cul, double value) {
+                ROW = row;
+                CUL = cul;
+                matrix = new T[row, cul];
+            }
+    
+
+    //// vectorをムーブして初期化するコンストラクタ
+    //Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) :
+    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    //    // 妥協の産物...ジャグ配列を禁止にしたい
+    //    // テンプレートを使わずに二次元目の要素数を固定する方法
+    //    checkMatrixCULSize();
+    //}
+
+    //// vectorを参照して初期化するコンストラクタ
+    //Matrix::Matrix(const std::vector<std::vector<double>>& matrix) :
+    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    //    checkMatrixCULSize();
+    //}
+
+    //// vectorをムーブして初期化するコンストラクタ(ジャグ配列チェックしない場合はtrue)
+    //Matrix::Matrix(const std::vector<std::vector<double>>&& matrix, bool unCheckJaddedArray) :
+    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    //    if (!unCheckJaddedArray) checkMatrixCULSize();
+    //}
+
+    //// vectorを参照して初期化するコンストラクタ(ジャグ配列チェックをしない場合はtrue)
+    //Matrix::Matrix(const std::vector<std::vector<double>>& matrix, bool unCheckJaddedArray) :
+    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    //    if (!unCheckJaddedArray) checkMatrixCULSize();
+    //}
+
+    //// ムーブコンストラクタ
+    //Matrix::Matrix(Matrix&& from) noexcept :
+    //    ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
+
+    // 行と列を指定してその要素の参照を取得（書き換え可）
+    public ref T at(uint row, uint cul) {
+        return ref matrix[row, cul];
+    }
+
+    // 行と列を指定してvalueで書き換えます
+    public void at(uint row, uint cul, T value) {
+        matrix[row, cul] = value;
+    }
+
+    // 行と列を指定してその要素の値を取得（変更不可）
+    public T read(uint row, uint cul) {
+            return matrix[row, cul];
+    }
+
+            // Matrixの内容を出力する
+            public string print() {
+                const string hazime = "{";
+                const string owari = "}";
+                const string margin = " ";
+
+                const byte CAP = 6 * 10;
+                StringBuilder sb = new StringBuilder("", CAP);
+                sb.Append("\n")
+                    .Append("――――――――――――\n")
+                    .Append("行数: ").Append(ROW).Append("\n")
+                    .Append("列数: ").Append(CUL).Append("\n")
+                    .Append( "――――――――――――\n");
+                sb.Append(hazime).Append("\n");
+
+                for (int j = 0; j < ROW; ++j) {
+                    sb.Append("\t").Append(hazime).Append(margin);
+                    for (int i = 0; i < CUL; ++i) {
+                        sb.Append(matrix[ROW, CUL]);
+                        if (i != (CUL - 1)) sb.Append(", ");
+                    }
+                    sb.Append(margin).Append(owari).Append("\n");
+                }
+                sb.Append(owari).Append("\n");
+                String result = sb.ToString();
+                System.Console.WriteLine(result);
+
+                return result;
+            }
+
+            //bool Matrix::checkMatrixCULSize() noexcept(false) {
+            //    for (size_t i = 0; i < matrix.size(); ++i) {
+            //        if (matrix.at(i).size() != CUL) {
+            //            throw "Matrixの列サイズが一致していません。";
+            //            return false;
+            //        }
+            //    }
+            //    return true;
+            //}
+
+            //uint32_t Matrix::test() {
+            //    return 321 * 42 + 12 * 3;
+            //}
+            public static Matrix<T> multiply(Matrix<T> lhs, Matrix<T> rhs) {
+            if (lhs.CUL != rhs.ROW) {
+            throw new System.Exception("計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+                + "左辺 Matrix row = " + lhs.ROW + "cul = " + lhs.CUL
+                + "右辺 Matrix row = " + rhs.ROW + "cul = " + rhs.CUL);
+                }
+            Matrix<T> newMatr = new(lhs.ROW, rhs.CUL);
+        for (int r = 0; r<lhs.ROW; ++r) {
+            for (int c = 0; c<rhs.CUL; ++c) {
+                //	newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
+                for (int k = 0; k<lhs.CUL; ++k) {
+                    newMatr.at(r, c) += lhs.read(r, k)* rhs.read(k, c);
+}
+            }
+        }
+        return newMatr;
+    }
+
+//    // 行列スカラー倍
+//    Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
+//    Matrix newMatrix(lhs.ROW, lhs.CUL);
+//    auto r = lhs.ROW;
+//    auto c = lhs.CUL;
+//    for (size_t i = 0; i < lhs.ROW; ++i) {
+//        for (size_t j = 0; j < lhs.CUL; ++j) {
+//            try {
+//                newMatrix.at(i, j)
+//                    = lhs.read(i, j) * rhs;
+//            } catch (std::out_of_range&e) {
+//        std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
+//    }
+//}
+//        }
+//        return newMatrix;
+//    }
+
+//    // 行列各要素に加算する
+//    Matrix add(const Matrix& lhs, double rhs) noexcept(false) {
+//    Matrix newMatrix(lhs.ROW, lhs.CUL);
+//    for (size_t i = 0; i < lhs.ROW; ++i) {
+//        for (size_t j = 0; j < lhs.CUL; ++j) {
+//            newMatrix.at(i, j) = lhs.read(i, j) + rhs;
+//        }
+//    }
+//    return newMatrix;
+//}
+
+//// 行列同士の加算
+//Matrix add(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+//    using namespace std::literals::string_literals;
+//        if (lhs.ROW != rhs.ROW || lhs.CUL != rhs.CUL) {
+//            throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+//                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
+//                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
+//        }
+//        Matrix newMatrix(lhs.ROW, lhs.CUL);
+//for (size_t i = 0; i < lhs.ROW; ++i) {
+//    for (size_t j = 0; j < lhs.CUL; ++j) {
+//        newMatrix.at(i, j) = lhs.read(i, j) + rhs.read(i, j);
+//    }
+//}
+//return newMatrix;
+//    }
+
+//    Matrix operator *(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+//    return multiply(lhs, rhs);
+//}
+
+//Matrix myk::lib::operator +(const Matrix& lhs, double rhs) noexcept(false) {
+//    return add(lhs, rhs);
+//}
+
+//Matrix myk::lib::operator +(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+//    return add(lhs, rhs);
+//}
+
+//bool operator ==(const Matrix& lhs, const Matrix& rhs) {
+//    //shapeチェック
+//    if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
+//    for (size_t i = 0; i < lhs.ROW; ++i) {
+//        for (size_t j = 0; j < lhs.CUL; ++j) {
+//            //全要素チェック
+//            try {
+//                if (lhs.read(i, j) != rhs.read(i, j)) return false;
+//            } catch (std::out_of_range&e) {
+//        std::cerr <<
+//            "operator==(const Matrix&, const Matrix&)で例外が発生しました。:" <<
+//            e.what() << std::endl;
+//        //return false;
+//            }
+//        }
+//                }
+//                return true;
+//            }
         }
 
         /// <summary>
@@ -505,9 +717,6 @@ namespace Myk {
         [STAThread]
         static void Main() {
 
-
-
-            //C++側の構造体のポインターをC#側に持ってきていろいろしてる
             IntPtr ptr = NativeMethod.getNativeMatrix(32);
             MatrixObjFromC mofc = (Myk.MatrixObjFromC) Marshal.PtrToStructure(ptr, typeof(Myk.MatrixObjFromC));
             IntPtr parr = mofc.array;

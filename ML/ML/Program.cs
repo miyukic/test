@@ -322,7 +322,7 @@ namespace Myk {
                 for (int j = 0; j < ROW; ++j) {
                     sb.Append("\t").Append(HAZIME).Append(MARGIN);
                     for (int i = 0; i < CUL; ++i) {
-                        sb.Append(_matrix[ROW, CUL]);
+                        sb.Append(_matrix[j, i]);
                         if (i != (CUL - 1)) sb.Append(", ");
                     }
                     sb.Append(MARGIN).Append(OWARI).Append("\n");

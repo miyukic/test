@@ -251,99 +251,64 @@ namespace Myk {
                 this.CUL = cul;
                 matrix = new double[row, cul];
             }
-    
 
-    //// vectorをムーブして初期化するコンストラクタ
-    //Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) :
-    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
-    //    // 妥協の産物...ジャグ配列を禁止にしたい
-    //    // テンプレートを使わずに二次元目の要素数を固定する方法
-    //    checkMatrixCULSize();
-    //}
 
-    //// vectorを参照して初期化するコンストラクタ
-    //Matrix::Matrix(const std::vector<std::vector<double>>& matrix) :
-    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
-    //    checkMatrixCULSize();
-    //}
+            // 他次元配列を使って初期化
+            public Matrix(double[,] matrix) {
+                this.matrix = matrix;
+                ROW = (uint)matrix.GetLength(0);
+                CUL = (uint)matrix.GetLength(1);
+            }
 
-    //// vectorをムーブして初期化するコンストラクタ(ジャグ配列チェックしない場合はtrue)
-    //Matrix::Matrix(const std::vector<std::vector<double>>&& matrix, bool unCheckJaddedArray) :
-    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
-    //    if (!unCheckJaddedArray) checkMatrixCULSize();
-    //}
 
-    //// vectorを参照して初期化するコンストラクタ(ジャグ配列チェックをしない場合はtrue)
-    //Matrix::Matrix(const std::vector<std::vector<double>>& matrix, bool unCheckJaddedArray) :
-    //    matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
-    //    if (!unCheckJaddedArray) checkMatrixCULSize();
-    //}
+            // 行と列を指定してその要素の参照を取得（書き換え可）
+            public ref double At(uint row, uint cul) {
+                return ref matrix[row, cul];
+            }
 
-    //// ムーブコンストラクタ
-    //Matrix::Matrix(Matrix&& from) noexcept :
-    //    ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
+            // 行と列を指定してvalueで書き換えます
+            public void At(uint row, uint cul, double value) {
+                matrix[row, cul] = value;
+            }
 
-    // 行と列を指定してその要素の参照を取得（書き換え可）
-    public ref double At(uint row, uint cul) {
-        return ref matrix[row, cul];
-    }
-
-    // 行と列を指定してvalueで書き換えます
-    public void At(uint row, uint cul, double value) {
-        matrix[row, cul] = value;
-    }
-
-    // 行と列を指定してその要素の値を取得（変更不可）
-    public double Read(uint row, uint cul) {
-            return matrix[row, cul];
-    }
+            // 行と列を指定してその要素の値を取得（変更不可）
+            public double Read(uint row, uint cul) {
+                return matrix[row, cul];
+            }
 
             // Matrixの内容を出力する
             public string Print() {
-                const string hazime = "{";
-                const string owari = "}";
-                const string margin = " ";
-
+                const string HAZIME = "{";
+                const string OWARI = "}";
+                const string MARGIN = " ";
                 const byte CAP = 6 * 10;
+
                 StringBuilder sb = new StringBuilder("", CAP);
                 sb.Append("\n")
                     .Append("――――――――――――\n")
                     .Append("行数: ").Append(ROW).Append("\n")
                     .Append("列数: ").Append(CUL).Append("\n")
-                    .Append( "――――――――――――\n");
-                sb.Append(hazime).Append("\n");
+                    .Append("――――――――――――\n");
+                sb.Append(HAZIME).Append("\n");
 
                 for (int j = 0; j < ROW; ++j) {
-                    sb.Append("\t").Append(hazime).Append(margin);
+                    sb.Append("\t").Append(HAZIME).Append(MARGIN);
                     for (int i = 0; i < CUL; ++i) {
                         sb.Append(matrix[ROW, CUL]);
                         if (i != (CUL - 1)) sb.Append(", ");
                     }
-                    sb.Append(margin).Append(owari).Append("\n");
+                    sb.Append(MARGIN).Append(OWARI).Append("\n");
                 }
-                sb.Append(owari).Append("\n");
-                String result = sb.ToString();
+                sb.Append(OWARI).Append("\n");
+                string result = sb.ToString();
                 System.Console.WriteLine(result);
 
                 return result;
             }
 
-            //bool Matrix::checkMatrixCULSize() noexcept(false) {
-            //    for (size_t i = 0; i < matrix.size(); ++i) {
-            //        if (matrix.at(i).size() != CUL) {
-            //            throw "Matrixの列サイズが一致していません。";
-            //            return false;
-            //        }
-            //    }
-            //    return true;
-            //}
-
-            //uint32_t Matrix::test() {
-            //    return 321 * 42 + 12 * 3;
-            //}
             public static Matrix Multiply(Matrix lhs, Matrix rhs) {
                 if (lhs.CUL != rhs.ROW) {
-                    throw new System.Exception("計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+                    throw new System.Exception("計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"
                         + "左辺 Matrix row = " + lhs.ROW + "cul = " + lhs.CUL
                         + "右辺 Matrix row = " + rhs.ROW + "cul = " + rhs.CUL);
                 }
@@ -359,82 +324,82 @@ namespace Myk {
                 return newMatr;
             }
 
-            //    // 行列スカラー倍
-            //    Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
-            //    Matrix newMatrix(lhs.ROW, lhs.CUL);
-            //    auto r = lhs.ROW;
-            //    auto c = lhs.CUL;
-            //    for (size_t i = 0; i < lhs.ROW; ++i) {
-            //        for (size_t j = 0; j < lhs.CUL; ++j) {
-            //            try {
-            //                newMatrix.at(i, j)
-            //                    = lhs.read(i, j) * rhs;
-            //            } catch (std::out_of_range&e) {
-            //        std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
-            //    }
-            //}
-            //        }
-            //        return newMatrix;
-            //    }
+            // 行列スカラー倍
+            public static Matrix Multiply(Matrix lhs, double rhs) {
+                Matrix newMatrix = new Matrix(lhs.ROW, lhs.CUL);
+                var r = lhs.ROW;
+                var c = lhs.CUL;
+                for (uint i = 0; i < lhs.ROW; ++i) {
+                    for (uint j = 0; j < lhs.CUL; ++j) {
+                        try {
+                            newMatrix.At(i, j)
+                                = lhs.Read(i, j) * rhs;
+                        } catch (Exception e) {
+                            System.Console.Error.WriteLine("Multiply(Matrix, double) " + e.Message);
+                        }
+                    }
+                }
+                return newMatrix;
+            }
 
-            //    // 行列各要素に加算する
-            //    Matrix add(const Matrix& lhs, double rhs) noexcept(false) {
-            //    Matrix newMatrix(lhs.ROW, lhs.CUL);
-            //    for (size_t i = 0; i < lhs.ROW; ++i) {
-            //        for (size_t j = 0; j < lhs.CUL; ++j) {
-            //            newMatrix.at(i, j) = lhs.read(i, j) + rhs;
-            //        }
-            //    }
-            //    return newMatrix;
-            //}
+            // 行列各要素に加算する
+            public static Matrix Add(Matrix lhs, double rhs) {
+                Matrix newMatrix = new(lhs.ROW, lhs.CUL);
+                for (uint i = 0; i < lhs.ROW; ++i) {
+                    for (uint j = 0; j < lhs.CUL; ++j) {
+                        newMatrix.At(i, j) = lhs.Read(i, j) + rhs;
+                    }
+                }
+                return newMatrix;
+            }
 
-            //// 行列同士の加算
-            //Matrix add(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-            //    using namespace std::literals::string_literals;
-            //        if (lhs.ROW != rhs.ROW || lhs.CUL != rhs.CUL) {
-            //            throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
-            //                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
-            //                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
-            //        }
-            //        Matrix newMatrix(lhs.ROW, lhs.CUL);
-            //for (size_t i = 0; i < lhs.ROW; ++i) {
-            //    for (size_t j = 0; j < lhs.CUL; ++j) {
-            //        newMatrix.at(i, j) = lhs.read(i, j) + rhs.read(i, j);
-            //    }
-            //}
-            //return newMatrix;
-            //    }
+            // 行列同士の加算
+            public static Matrix Add(in Matrix lhs, in Matrix rhs) {
+                if (lhs.ROW != rhs.ROW || lhs.CUL != rhs.CUL) {
+                    throw new System.Exception("計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"
+                        + "左辺 Matrix row = " + lhs.ROW + "cul = " + lhs.CUL
+                        + "右辺 Matrix row = " + rhs.ROW + "cul = " + rhs.CUL);
+                }
+                Matrix newMatrix = new(lhs.ROW, lhs.CUL);
+                for (uint i = 0; i < lhs.ROW; ++i) {
+                    for (uint j = 0; j < lhs.CUL; ++j) {
+                        newMatrix.At(i, j) = lhs.Read(i, j) + rhs.Read(i, j);
+                    }
+                }
+                return newMatrix;
+            }
 
-            //    Matrix operator *(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-            //    return multiply(lhs, rhs);
-            //}
+            public static Matrix operator*(Matrix lhs, Matrix rhs) {
+                return Multiply(lhs, rhs);
+            }
 
-            //Matrix myk::lib::operator +(const Matrix& lhs, double rhs) noexcept(false) {
-            //    return add(lhs, rhs);
-            //}
+            public static Matrix operator+(Matrix lhs, double rhs) {
+                return Add(lhs, rhs);
+            }
 
-            //Matrix myk::lib::operator +(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
-            //    return add(lhs, rhs);
-            //}
+            public static Matrix operator+(Matrix lhs, Matrix rhs) {
+                return Add(lhs, rhs);
+            }
+            public static bool operator !=(Matrix lhs, Matrix rhs) {
+                return !(lhs == rhs);   
+            }
 
-            //bool operator ==(const Matrix& lhs, const Matrix& rhs) {
-            //    //shapeチェック
-            //    if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
-            //    for (size_t i = 0; i < lhs.ROW; ++i) {
-            //        for (size_t j = 0; j < lhs.CUL; ++j) {
-            //            //全要素チェック
-            //            try {
-            //                if (lhs.read(i, j) != rhs.read(i, j)) return false;
-            //            } catch (std::out_of_range&e) {
-            //        std::cerr <<
-            //            "operator==(const Matrix&, const Matrix&)で例外が発生しました。:" <<
-            //            e.what() << std::endl;
-            //        //return false;
-            //            }
-            //        }
-            //                }
-            //                return true;
-            //            }
+            public static bool operator==(Matrix lhs, Matrix rhs) {
+                //shapeチェック
+                if (lhs.CUL != rhs.CUL || lhs.ROW != rhs.ROW) return false;
+                for (uint i = 0; i < lhs.ROW; ++i) {
+                    for (uint j = 0; j < lhs.CUL; ++j) {
+                        //全要素チェック
+                        try {
+                            if (lhs.Read(i, j) != rhs.Read(i, j)) return false;
+                        } catch (Exception e) {
+                            System.Console.Error.WriteLine(
+                                "operator==(const Matrix&, const Matrix&)で例外が発生しました。:" + e.Message);
+                        }
+                    }
+                }
+                return true;
+            }
         }
 
         /// <summary>
@@ -452,7 +417,6 @@ namespace Myk {
 
             public double GetX1() {
                 return x1x2[0];
-
             }
 
             public double DotProduct(Matrix2x1 mat21) {

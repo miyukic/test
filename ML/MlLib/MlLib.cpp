@@ -580,7 +580,7 @@ void getMatrixData(myk::ID id, double* parr) {
     myk::UPtrMtx& mtx = mmo.getUPtrMtx(id);
     for (size_t r = 0; r < mtx->ROW; ++r) {
         for (size_t c = 0; c < mtx->CUL; ++c) {
-            parr[r + c] = mtx->read(r, c);
+            parr[r * mtx->CUL + c] = mtx->read(r, c);
         }
     }
 }

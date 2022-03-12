@@ -104,6 +104,8 @@ namespace Myk {
             public CMatrix(in double[,] array2) {
                 uint row = (uint)array2.GetLength(0);
                 uint cul = (uint)array2.GetLength(1);
+                this.ROW = row;
+                this.CUL = cul;
                 double[] array =
                     //array2.OfType<double>().ToArray();
                     array2.Cast<double>().ToArray();
@@ -267,13 +269,25 @@ namespace Myk {
                 ROW = (uint)matrix.GetLength(0);
                 CUL = (uint)matrix.GetLength(1);
             }
-            
             //CMatrixからMatrixを生成するコンストラクタ
             internal Matrix(CMatrix cMatrix) {
                 this._matrix = new double[cMatrix.ROW, cMatrix.CUL];
+                this.ROW = cMatrix.ROW;
+                this.CUL = cMatrix.CUL;
                 NativeMethod.getMatrixData(cMatrix.id, this._matrix);
+                
+//var tempArray = new double[cMatrix.ROW * cMatrix.CUL];
+//this.ROW = cMatrix.ROW;
+//this.CUL = cMatrix.CUL;
+//NativeMethod.getMatrixData(cMatrix.id, tempArray);
+//                for (int r = 0; r < ROW; ++r) {
+//                    for (int c = 0; c < CUL; ++c) {
+//                        this._matrix[r,c] = tempArray[r*c];
+//                    }
+//                }
+//                }
+//tempArray                
             }
-
 
             // 行と列を指定してその要素の参照を取得（書き換え可）
             public ref double At(uint row, uint cul) {
@@ -711,10 +725,12 @@ namespace Myk {
         static void Main() {
             double[,] oa = new double[3, 3] {
                 { 1, 2, 3 },
-                { 2, 3, 4 },
-                { 3, 4, 5 },
+                { 1, 2, 3 },
+                { 1, 2, 3 }
             };
+
             CMatrix cmtx = new(oa);
+            cmtx.Print();
             Matrix mtx = cmtx.ToMatrix();
             mtx.Print();
 

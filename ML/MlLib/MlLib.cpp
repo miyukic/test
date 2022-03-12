@@ -39,53 +39,53 @@ namespace myk::lib {
     // 要素は初期化しない
     //Matrix::Matrix(uint32_t row, uint32_t cul) : Matrix(row, cul, 0.0F) {}
     Matrix::Matrix(uint32_t row, uint32_t cul) :
-        ROW{ row }, CUL{ cul }, matrix(row, std::vector<double>(cul))
+        ROW{ row }, CUL{ cul }, _matrix(row, std::vector<double>(cul))
     {}
 
     // コンストラクタ
     Matrix::Matrix(uint32_t row, uint32_t cul, double value) :
         ROW{ row }, CUL{ cul },
-        matrix(row, std::vector<double>(cul, value)) { }
+        _matrix(row, std::vector<double>(cul, value)) { }
 
     // vectorをムーブして初期化するコンストラクタ
-    Matrix::Matrix(const std::vector<std::vector<double>>&& matrix) :
-        matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    Matrix::Matrix(const std::vector<std::vector<double>>&& _matrix) :
+        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
         // 妥協の産物...ジャグ配列を禁止にしたい
         // テンプレートを使わずに二次元目の要素数を固定する方法
         checkMatrixCULSize();
     }
 
     // vectorを参照して初期化するコンストラクタ
-    Matrix::Matrix(const std::vector<std::vector<double>>& matrix) :
-        matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    Matrix::Matrix(const std::vector<std::vector<double>>& _matrix) :
+        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
         checkMatrixCULSize();
     }
 
     // vectorをムーブして初期化するコンストラクタ(ジャグ配列チェックしない場合はtrue)
-    Matrix::Matrix(const std::vector<std::vector<double>>&& matrix, bool unCheckJaddedArray) :
-        matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    Matrix::Matrix(const std::vector<std::vector<double>>&& _matrix, bool unCheckJaddedArray) :
+        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
         if (!unCheckJaddedArray) checkMatrixCULSize();
     }
 
     // vectorを参照して初期化するコンストラクタ(ジャグ配列チェックをしない場合はtrue)
-    Matrix::Matrix(const std::vector<std::vector<double>>& matrix, bool unCheckJaddedArray) :
-        matrix{ matrix }, ROW{ matrix.size() }, CUL{ matrix.at(0).size() } {
+    Matrix::Matrix(const std::vector<std::vector<double>>& _matrix, bool unCheckJaddedArray) :
+        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
         if (!unCheckJaddedArray) checkMatrixCULSize();
     }
 
     // ムーブコンストラクタ
     Matrix::Matrix(Matrix&& from) noexcept :
-        ROW{ from.ROW }, CUL{ from.CUL }, matrix(from.matrix) { }
+        ROW{ from.ROW }, CUL{ from.CUL }, _matrix(from._matrix) { }
 
     // 行と列を指定してその要素の参照を取得（変更可）
     double& Matrix::at(uint32_t ROW, uint32_t CUL) noexcept(false) {
-        return matrix.at(ROW).at(CUL);
+        return _matrix.at(ROW).at(CUL);
     }
 
     // 行と列を指定してその要素の値を取得（変更不可）
     double Matrix::read(uint32_t ROW, uint32_t CUL) const noexcept(false) {
         try {
-            return matrix.at(ROW).at(CUL);
+            return _matrix.at(ROW).at(CUL);
         } catch (std::out_of_range& e) {
             std::cerr << "Matrix::read で例外が発生しました:" << e.what() << std::endl;
             return 0;
@@ -111,7 +111,7 @@ namespace myk::lib {
             << "列数: " << CUL << "\n"
             << "――――――――――――\n";
         sst << hazime << "\n";
-        for (std::vector<double> vec : matrix) {
+        for (std::vector<double> vec : _matrix) {
             sst << "\t" << hazime << margin;
             for (size_t i = 0; i < vec.size(); ++i) {
                 sst << vec.at(i);
@@ -125,8 +125,8 @@ namespace myk::lib {
     }
 
     bool Matrix::checkMatrixCULSize() noexcept(false) {
-        for (size_t i = 0; i < matrix.size(); ++i) {
-            if (matrix.at(i).size() != CUL) {
+        for (size_t i = 0; i < _matrix.size(); ++i) {
+            if (_matrix.at(i).size() != CUL) {
                 throw "Matrixの列サイズが一致していません。";
                 return false;
             }
@@ -269,17 +269,17 @@ namespace myk {
         /// Matrixオブジェクトを登録
         /// 戻り値は管理用のID
         /// </summary>
-        /// <param name="matrix"></param>
+        /// <param name="_matrix"></param>
         /// <returns></returns>
-        ID registMTXObj(UPtrMtx&& matrix) {
+        ID registMTXObj(UPtrMtx&& _matrix) {
             if (_deletedNum.size() > 0) {
                 ID id = static_cast<ID>(_deletedNum.size());
-                _mtxList.at(id) = std::move(matrix);
+                _mtxList.at(id) = std::move(_matrix);
                 _deletedNum.pop_back();
                 return id;
             }
             ID id = static_cast<ID>(_mtxList.size());
-            _mtxList.emplace_back(std::move(matrix));
+            _mtxList.emplace_back(std::move(_matrix));
             return id;
         }
 
@@ -409,7 +409,7 @@ namespace myk {
 }
 
 #pragma region テスト関数
-
+#if _DEBUG
 void getCsObject(CsObject* obj) {
     obj->x = 10;
 }
@@ -429,7 +429,7 @@ int* getArray() {
     return arr;
 }
 
-Info info = { 333, "あいうえお", {2, 3, 4, 10}, new int[30]};
+Info info = { 333, "abcdefgあかさたな", {2, 3, 4, 10}, new int[30]};
 
 Info* getInfoStruct() {
     for (size_t i = 0; i < 30; ++i) {
@@ -442,6 +442,7 @@ Info* getInfoStruct() {
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
     return myk::lib::Matrix(ROW, CUL);
 }
+#endif
 #pragma endregion //テスト関数
 
 #pragma endregion
@@ -572,20 +573,32 @@ myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs) {
     return id;
 }
 
-myk::MatrixObjFromC* getNativeMatrix(myk::ID id) {
-    myk::MatrixObjFromC* mofc = new myk::MatrixObjFromC();
-    mofc->array = new double[20];
-    for (size_t i = 0; i < 20; ++i) {
-        mofc->array[i] = i;
+void getMatrixData(myk::ID id, double* parr) {
+    using namespace myk::lib;
+    using namespace myk;
+    ManageMTXObj& mmo = myk::ManageMTXObj::getInstance();
+    myk::UPtrMtx& mtx = mmo.getUPtrMtx(id);
+    for (size_t r = 0; r < mtx->ROW; ++r) {
+        for (size_t c = 0; c < mtx->CUL; ++c) {
+            parr[r + c] = mtx->read(r, c);
+        }
     }
-    return mofc;
 }
 
-void sendMatrix(myk::MatrixObjFromC* obj) {
-    for (size_t i = 0; i < 20; ++i) {
-        obj->array[i] = i;
-    }
-}
+//MatrixオブジェクトをMatrixObjFromCオブジェクトとして取得
+//myk::MatrixObjFromC* getMatrixData(myk::ID id) {
+//    myk::MatrixObjFromC* mofc = new myk::MatrixObjFromC();
+//    mofc->array = new double[20];
+//    for (size_t i = 0; i < 20; ++i) {
+//        mofc->array[i] = i;
+//    }
+//    return mofc;
+//}
+
+//getMatrixObjFromC で取得したオブジェクトをメモリ上から消す。
+//void freeMatrixObjFromC(myk::ID id) {
+//}
+
 
 #pragma endregion //FFI API
 

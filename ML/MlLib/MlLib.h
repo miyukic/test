@@ -23,23 +23,6 @@ typedef int BOOL;
 #include <string>
 #include <memory>
 
-struct MLLIB_API CsObject {
-    int x;
-    int y;
-};
-
-struct MLLIB_API Info {
-    int    index;
-    char   name[128];
-    int    statuses[50];
-    int* array;
-};
-extern "C" {
-    MLLIB_API void writeManagedArray(int len, double* parr);
-    MLLIB_API void getCsObject(CsObject* obj);
-    MLLIB_API int* getArray();
-    MLLIB_API Info* getInfoStruct();
-}
 
 namespace myk {
 
@@ -47,7 +30,7 @@ namespace myk {
     namespace lib {
 
         class MLLIB_API Matrix {
-            std::vector<std::vector<double>> matrix;
+            std::vector<std::vector<double>> _matrix;
         public:
             const uint32_t ROW = 1;
             const uint32_t CUL = 1;
@@ -85,16 +68,16 @@ namespace myk {
             /// <summary>
             /// vectorをムーブして初期化するコンストラクタ。
             /// </summary>
-            /// <param name="matrix"></param>
+            /// <param name="_matrix"></param>
             /// <param name="unCheckJaddedArray">ジャグ配列チェックをしない場合は true </param>
-            Matrix(const std::vector<std::vector<double>>&& matrix, bool unCheckJaddedArray);
+            Matrix(const std::vector<std::vector<double>>&& _matrix, bool unCheckJaddedArray);
 
             /// <summary>
             /// vectorを参照して初期化するコンストラクタ。
             /// </summary>
-            /// <param name="matrix"></param>
+            /// <param name="_matrix"></param>
             /// <param name="unCheckJaddedArray">ジャグ配列チェックをしない</param>
-            Matrix(const std::vector<std::vector<double>>& matrix, bool unCheckJaddedArray);
+            Matrix(const std::vector<std::vector<double>>& _matrix, bool unCheckJaddedArray);
 
             /// <summary>
             /// Matrixのムーブコンストラクタ
@@ -223,8 +206,32 @@ namespace myk {
 
 } // myk namespace end
 
+#pragma region テストコード
+#if _DEBUG
+struct MLLIB_API CsObject {
+    int x;
+    int y;
+};
 
-MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
+struct MLLIB_API Info {
+    int    index;
+    char   name[128];
+    int    statuses[50];
+    int* array;
+};
+
+extern "C" {
+    MLLIB_API void writeManagedArray(int len, double* parr);
+    MLLIB_API void getCsObject(CsObject* obj);
+    MLLIB_API int* getArray();
+    MLLIB_API Info* getInfoStruct();
+
+    MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
+}
+
+#endif
+#pragma endregion
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -315,15 +322,9 @@ extern "C" {
     /// <param name="rhs"></param>
     MLLIB_API myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs);
 
-    /// <summary>
-    /// 行列を渡す
-    /// </summary>
-    /// <param name="lhs"></param>
-    /// <param name="rhs"></param>
-    MLLIB_API myk::MatrixObjFromC* getNativeMatrix(myk::ID id);
-
+    /// IDに指定した行列を渡す
+    void getMatrixData(myk::ID id, double* parr);
     
-    MLLIB_API void sendMatrix(myk::MatrixObjFromC* obj);
 #ifdef __cplusplus
 }
 #endif

@@ -63,9 +63,10 @@ namespace Myk {
         #endregion
     }　// .Util namespace end
     namespace Lib {
+        interface IMatrix { }
         #region Matrix
         // C++で実装されたMatrixクラスの薄いラッパークラス
-        class CMatrix {
+        class CMatrix : IMatrix{
             public uint ROW { get; }
             public uint CUL { get; }
             private ID _id;
@@ -111,6 +112,12 @@ namespace Myk {
                 (IntPtr pInt, uint len) = CreateNativeDoubleArray(array);
                 _id = NativeMethod.createNativeMatrixARC(pInt, len, row, cul);
                 Marshal.FreeCoTaskMem(pInt);
+            }
+
+
+            //CMatrixをMatrixに変換
+            public Matrix ToMatrix() {
+                return new Matrix(this);
             }
 
             public bool Print() {
@@ -206,6 +213,7 @@ namespace Myk {
 
             //C++の関数
             static class NativeMethod {
+                
                 [DllImport("MlLib.dll")]
                 public static extern ID createNativeMatrixRCV(uint ROW, uint CUL, double value);
 
@@ -233,9 +241,9 @@ namespace Myk {
         /// <summary>
         /// 汎用行列クラス
         /// </summary>
-        public class Matrix {
+        public class Matrix : IMatrix {
 
-            private double[,] matrix;
+            private double[,] _matrix = new double[3,3];
             public uint ROW { get; } = 1;
             public uint CUL { get; } = 1;
 
@@ -249,31 +257,37 @@ namespace Myk {
             public Matrix(uint row, uint cul, double value) {
                 this.ROW = row;
                 this.CUL = cul;
-                matrix = new double[row, cul];
+                _matrix = new double[row, cul];
             }
 
 
             // 他次元配列を使って初期化
             public Matrix(double[,] matrix) {
-                this.matrix = matrix;
+                this._matrix = matrix;
                 ROW = (uint)matrix.GetLength(0);
                 CUL = (uint)matrix.GetLength(1);
+            }
+            
+            //CMatrixからMatrixを生成するコンストラクタ
+            internal Matrix(CMatrix cMatrix) {
+                this._matrix = new double[cMatrix.ROW, cMatrix.CUL];
+                NativeMethod.getMatrixData(cMatrix.id, this._matrix);
             }
 
 
             // 行と列を指定してその要素の参照を取得（書き換え可）
             public ref double At(uint row, uint cul) {
-                return ref matrix[row, cul];
+                return ref _matrix[row, cul];
             }
 
             // 行と列を指定してvalueで書き換えます
             public void At(uint row, uint cul, double value) {
-                matrix[row, cul] = value;
+                _matrix[row, cul] = value;
             }
 
             // 行と列を指定してその要素の値を取得（変更不可）
             public double Read(uint row, uint cul) {
-                return matrix[row, cul];
+                return _matrix[row, cul];
             }
 
             // Matrixの内容を出力する
@@ -294,7 +308,7 @@ namespace Myk {
                 for (int j = 0; j < ROW; ++j) {
                     sb.Append("\t").Append(HAZIME).Append(MARGIN);
                     for (int i = 0; i < CUL; ++i) {
-                        sb.Append(matrix[ROW, CUL]);
+                        sb.Append(_matrix[ROW, CUL]);
                         if (i != (CUL - 1)) sb.Append(", ");
                     }
                     sb.Append(MARGIN).Append(OWARI).Append("\n");
@@ -400,11 +414,29 @@ namespace Myk {
                 }
                 return true;
             }
+
+            public override bool Equals(Object? obj) {
+                if (obj == null || GetType() != obj.GetType()) {
+                    return false;
+                }
+                return GetHashCode() == obj.GetHashCode();
+            }
+
+            // override object.GetHashCode
+            public override int GetHashCode() {
+                return new { CUL, ROW }.GetHashCode();
+            }
+
+            public static class NativeMethod {
+                [DllImport("MlLib.dll")]
+                public static extern void getMatrixData(ID id, double[,] parr);
+            }
+
         }
 
         /// <summary>
         ///  MatrixClass
-        /// [x1, x2]
+        ///// [x1, x2]
         /// </summary>
         public class Matrix1x2 {
             private double[] x1x2 = new double[] { 0, 0 };
@@ -677,16 +709,14 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
-
-            IntPtr ptr = NativeMethod.getNativeMatrix(32);
-            MatrixObjFromC mofc = (Myk.MatrixObjFromC) Marshal.PtrToStructure(ptr, typeof(Myk.MatrixObjFromC));
-            IntPtr parr = mofc.array;
-            double[] array = new double[20];
-            Marshal.Copy(parr, array, 0, array.Length);
-            foreach (double v in array) {
-                Console.WriteLine(v);
-            }
-
+            double[,] oa = new double[3, 3] {
+                { 1, 2, 3 },
+                { 2, 3, 4 },
+                { 3, 4, 5 },
+            };
+            CMatrix cmtx = new(oa);
+            Matrix mtx = cmtx.ToMatrix();
+            mtx.Print();
 
             #region 構造体・配列受け渡しテスト
             //CsObject obj = new CsObject{x=1, y=2};
@@ -787,11 +817,6 @@ namespace Myk {
 
 public static class NativeMethod {
 
-    [DllImport("MlLib.dll")]
-    public static extern void sendMatrix(ref Myk.MatrixObjFromC obj);
-
-    [DllImport("MlLib.dll")]
-    public static extern IntPtr getNativeMatrix(ID id);
 
     #region テストコード
     [DllImport("MlLib.dll")]

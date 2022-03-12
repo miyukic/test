@@ -323,7 +323,7 @@ extern "C" {
     MLLIB_API myk::ID nativeMatrixAdd(myk::ID lhs, myk::ID rhs);
 
     /// IDに指定した行列を渡す
-    void getMatrixData(myk::ID id, double* parr);
+    MLLIB_API void getMatrixData(myk::ID id, double* parr);
     
 #ifdef __cplusplus
 }

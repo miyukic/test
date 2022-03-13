@@ -51,7 +51,7 @@ namespace myk::lib {
 
     // vectorをムーブして初期化するコンストラクタ
     Matrix::Matrix(const std::vector<std::vector<double>>&& _matrix) :
-        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
+        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{static_cast<uint32_t>(_matrix.at(0).size())} {
         // 妥協の産物...ジャグ配列を禁止にしたい
         // テンプレートを使わずに二次元目の要素数を固定する方法
         checkMatrixCULSize();
@@ -59,19 +59,19 @@ namespace myk::lib {
 
     // vectorを参照して初期化するコンストラクタ
     Matrix::Matrix(const std::vector<std::vector<double>>& _matrix) :
-        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
+        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{static_cast<uint32_t>(_matrix.at(0).size())} {
         checkMatrixCULSize();
     }
 
     // vectorをムーブして初期化するコンストラクタ(ジャグ配列チェックしない場合はtrue)
     Matrix::Matrix(const std::vector<std::vector<double>>&& _matrix, bool unCheckJaddedArray) :
-        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
+        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{static_cast<uint32_t>(_matrix.at(0).size())} {
         if (!unCheckJaddedArray) checkMatrixCULSize();
     }
 
     // vectorを参照して初期化するコンストラクタ(ジャグ配列チェックをしない場合はtrue)
     Matrix::Matrix(const std::vector<std::vector<double>>& _matrix, bool unCheckJaddedArray) :
-        _matrix{ _matrix }, ROW{ _matrix.size() }, CUL{ _matrix.at(0).size() } {
+        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{ static_cast<uint32_t>(_matrix.at(0).size()) } {
         if (!unCheckJaddedArray) checkMatrixCULSize();
     }
 

@@ -218,27 +218,51 @@ namespace Myk {
 
             //C++の関数
             static class NativeMethod {
-                
-                [DllImport("MlLib.dll")]
+
+#if WIN_32
+                [DllImport("MlLib32.dll")]
                 public static extern ID createNativeMatrixRCV(uint ROW, uint CUL, double value);
 
-                [DllImport("MlLib.dll")]
+                [DllImport("MlLib32.dll")]
                 public static extern ID createNativeMatrixARC(System.IntPtr arr, uint len, uint row, uint cul);
 
-                [DllImport("MlLib.dll")]
+                [DllImport("MlLib32.dll")]
                 public static extern ID nativeMatrixMultiply(ID lhs, ID rhs);
 
-                [DllImport("MlLib.dll")]
+                [DllImport("MlLib32.dll")]
                 public static extern ID nativeMatrixAddSC(ID id, double value);
 
-                [DllImport("MlLib.dll")]
+                [DllImport("MlLib32.dll")]
                 public static extern ID nativeMatrixAdd(ID lhs, ID rhs);
 
-                [DllImport("MlLib.dll")]
+                [DllImport("MlLib32.dll")]
                 public static extern bool nativeMatrixPrint(ID id);
 
-                [DllImport("MlLib.dll")]
+                [DllImport("MlLib32.dll")]
                 public static extern BOOL nativeMatrixEquals(ID lId, ID rId);
+#elif WIN_64
+                [DllImport("MlLib64.dll")]
+                public static extern ID createNativeMatrixRCV(uint ROW, uint CUL, double value);
+
+                [DllImport("MlLib64.dll")]
+                public static extern ID createNativeMatrixARC(System.IntPtr arr, uint len, uint row, uint cul);
+
+                [DllImport("MlLib64.dll")]
+                public static extern ID nativeMatrixMultiply(ID lhs, ID rhs);
+
+                [DllImport("MlLib64.dll")]
+                public static extern ID nativeMatrixAddSC(ID id, double value);
+
+                [DllImport("MlLib64.dll")]
+                public static extern ID nativeMatrixAdd(ID lhs, ID rhs);
+
+                [DllImport("MlLib64.dll")]
+                public static extern bool nativeMatrixPrint(ID id);
+
+                [DllImport("MlLib64.dll")]
+                public static extern BOOL nativeMatrixEquals(ID lId, ID rId);
+
+#endif //x64
 
             }
         }
@@ -445,8 +469,13 @@ namespace Myk {
             }
 
             public static class NativeMethod {
-                [DllImport("MlLib.dll")]
+#if WIN_32
+                [DllImport("MlLib32.dll")]
                 public static extern void getMatrixData(ID id, double[,] parr);
+#elif WIN_64
+                [DllImport("MlLib64.dll")]
+                public static extern void getMatrixData(ID id, double[,] parr);
+#endif
             }
 
         }
@@ -539,7 +568,7 @@ namespace Myk {
             }
 
         }
-        #endregion
+#endregion
     } // Myk.Lib namespace end
 
     // ノードを表すクラス。h
@@ -563,7 +592,7 @@ namespace Myk {
         }
     }
     class Program {
-        #region data
+#region data
         const double E = 2.71828182846;
         static readonly double[] 教師データ = {
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D,
@@ -584,7 +613,7 @@ namespace Myk {
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D,
             0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D, 0D
     };
-        #endregion
+#endregion
         // 初期バイアス
         static double bias = 1;
         // 初期重み
@@ -727,40 +756,42 @@ namespace Myk {
         [STAThread]
         static void Main() {
             NativeMethod.dbgMain();
-            //var random = new System.Random();
-            //int size = 3000;
-            //double[,] oa = new double[size, size];
-            //for (int i = 0; i < size; ++i) {
-            //    for (int j = 0; j < size; ++j) {
-            //        oa[i, j] = random.NextDouble()*50;
-            //    }
-            //}
-            //Console.WriteLine("初期化完了: Size=" + size);
 
-            //Matrix cmtx = new(oa);
-            ////CMatrix cmtx2 = new(new double[,]{ { 2 }, { 2 }, { 2 } });
+            var random = new System.Random();
+            int size = 300;
+            double[,] oa = new double[size, size];
+            for (int i = 0; i < size; ++i) {
+                for (int j = 0; j < size; ++j) {
+                    oa[i, j] = random.NextDouble()*50;
+                }
+            }
+            Console.WriteLine("初期化完了: Size=" + size);
 
-            //var sw = System.Diagnostics.Stopwatch.StartNew();
-            //long times = 0;
-            //Matrix? mt = null;
-            //for (int count = 0; count < 10; ++count) {
-            //    sw.Start();
-            //    mt = cmtx * cmtx;
-            //    for (int i = 0; i < 3; i++) {
-            //        mt = mt * cmtx;
-            //    }
-            //    sw.Stop();
-            //    times += sw.ElapsedMilliseconds;
-            //    Console.WriteLine(count + "回目 秒数: " + sw.ElapsedMilliseconds + "ms");
-            //    sw.Reset();
-            //}
-            //long time = times / 10;
-            //Console.WriteLine(" Matrix:" + time + " ms");
+            Matrix cmtx = new(oa);
+            //CMatrix cmtx2 = new(new double[,]{ { 2 }, { 2 }, { 2 } });
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            double times = 0;
+            Matrix? mt = null;
+            for (int count = 0; count < 10; ++count) {
+                sw.Start();
+                mt = cmtx * cmtx;
+                for (int i = 0; i < 3; i++) {
+                    mt = mt * cmtx;
+                }
+                sw.Stop();
+                times += sw.ElapsedMilliseconds;
+                Console.WriteLine(count + "回目 秒数: " + sw.ElapsedMilliseconds + "ms");
+                sw.Reset();
+            }
+            double time = times / 10;
+            Console.WriteLine(" Matrix:" + time + " ms");
+
             //cmtx * cmtx;
             //Matrix mtx = (cmtx * cmtx).ToMatrix();
             //mtx.Print();
 
-            #region 構造体・配列受け渡しテスト
+#region 構造体・配列受け渡しテスト
             //CsObject obj = new CsObject{x=1, y=2};
             //CsObject retObject = new CsObject();
             //NativeMethod.getCsObject(ref retObject);
@@ -793,10 +824,10 @@ namespace Myk {
             //    Console.WriteLine(i);
             //}
 
-            #endregion //構造体・配列受け渡しテスト
+#endregion //構造体・配列受け渡しテスト
 
 
-            #region テストコード
+#region テストコード
             //Routine(weightW1W2, bias, 教師データ.Length);
             //Routine(weightW1W2, bias, 3);
             //ICollection<int> list = new LinkedList<int>();
@@ -849,7 +880,7 @@ namespace Myk {
             //    t = sw.ElapsedMilliseconds;
             //    Console.WriteLine("forloop + double: " + t + " ms");
             //}
-            #endregion
+#endregion
             //Application.Run(new Form1());
 
         }
@@ -860,23 +891,42 @@ namespace Myk {
 public static class NativeMethod {
 
 
-    #region テストコード
-    [DllImport("MlLib.dll")]
+#region テストコード
+#if WIN_32
+    [DllImport("MlLib32.dll")]
     public static extern void dbgMain();
 
-    [DllImport("MlLib.dll")]
+    [DllImport("MlLib32.dll")]
     public static extern void fnMlLib();
-    [DllImport("MlLib.dll")]
+    [DllImport("MlLib32.dll")]
     public static extern void getCsObject(ref Myk.CsObject retObj);
 
-    [DllImport("MlLib.dll")]
+    [DllImport("MlLib32.dll")]
     public static extern IntPtr getArray();
      
-    [DllImport("MlLib.dll")]
+    [DllImport("MlLib32.dll")]
     public static extern IntPtr getInfoStruct();
 
-    [DllImport("MlLib.dll")]
+    [DllImport("MlLib32.dll")]
     public static extern void writeManagedArray(int len, double[] parr);
-    #endregion
+#elif WIN_64
+    [DllImport("MlLib64.dll")]
+    public static extern void dbgMain();
+
+    [DllImport("MlLib64.dll")]
+    public static extern void fnMlLib();
+    [DllImport("MlLib64.dll")]
+    public static extern void getCsObject(ref Myk.CsObject retObj);
+
+    [DllImport("MlLib64.dll")]
+    public static extern IntPtr getArray();
+     
+    [DllImport("MlLib64.dll")]
+    public static extern IntPtr getInfoStruct();
+
+    [DllImport("MlLib64.dll")]
+    public static extern void writeManagedArray(int len, double[] parr);
+#endif
+#endregion
 }
 #endif

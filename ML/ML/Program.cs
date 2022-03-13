@@ -64,6 +64,7 @@ namespace Myk {
     }　// .Util namespace end
     namespace Lib {
         interface IMatrix { }
+
         #region Matrix
         // C++で実装されたMatrixクラスの薄いラッパークラス
         class CMatrix : IMatrix{
@@ -138,8 +139,10 @@ namespace Myk {
                 return new { CUL, ROW, _id }.GetHashCode();
             }
 
-            public static bool operator ==(CMatrix lhs, CMatrix rhs) {
+            public static bool operator ==(CMatrix? lhs, CMatrix? rhs) {
                 //Console.WriteLine("operator== " + NativeMethod.equals(lhs.id, rhs.id));
+                if (lhs is null && rhs is null) return true;
+                if (lhs is null || rhs is null) return false;
                 return Convert.ToBoolean(NativeMethod.nativeMatrixEquals(lhs.id, rhs.id));
             }
 
@@ -223,13 +226,13 @@ namespace Myk {
                 public static extern ID createNativeMatrixARC(System.IntPtr arr, uint len, uint row, uint cul);
 
                 [DllImport("MlLib.dll")]
-                public static extern ID nativeMatrixMultiply(ID lId, ID rId);
+                public static extern ID nativeMatrixMultiply(ID lhs, ID rhs);
 
                 [DllImport("MlLib.dll")]
-                public static extern ID nativeMatrixAddSC(ID lId, double value);
+                public static extern ID nativeMatrixAddSC(ID id, double value);
 
                 [DllImport("MlLib.dll")]
-                public static extern ID nativeMatrixAdd(ID lId, ID rId);
+                public static extern ID nativeMatrixAdd(ID lhs, ID rhs);
 
                 [DllImport("MlLib.dll")]
                 public static extern bool nativeMatrixPrint(ID id);
@@ -723,16 +726,39 @@ namespace Myk {
 
         [STAThread]
         static void Main() {
-            double[,] oa = new double[3, 3] {
-                { 1, 2, 3 },
-                { 1, 2, 3 },
-                { 1, 2, 3 }
-            };
+            NativeMethod.dbgMain();
+            //var random = new System.Random();
+            //int size = 3000;
+            //double[,] oa = new double[size, size];
+            //for (int i = 0; i < size; ++i) {
+            //    for (int j = 0; j < size; ++j) {
+            //        oa[i, j] = random.NextDouble()*50;
+            //    }
+            //}
+            //Console.WriteLine("初期化完了: Size=" + size);
 
-            CMatrix cmtx = new(oa);
-            cmtx.Print();
-            Matrix mtx = cmtx.ToMatrix();
-            mtx.Print();
+            //Matrix cmtx = new(oa);
+            ////CMatrix cmtx2 = new(new double[,]{ { 2 }, { 2 }, { 2 } });
+
+            //var sw = System.Diagnostics.Stopwatch.StartNew();
+            //long times = 0;
+            //Matrix? mt = null;
+            //for (int count = 0; count < 10; ++count) {
+            //    sw.Start();
+            //    mt = cmtx * cmtx;
+            //    for (int i = 0; i < 3; i++) {
+            //        mt = mt * cmtx;
+            //    }
+            //    sw.Stop();
+            //    times += sw.ElapsedMilliseconds;
+            //    Console.WriteLine(count + "回目 秒数: " + sw.ElapsedMilliseconds + "ms");
+            //    sw.Reset();
+            //}
+            //long time = times / 10;
+            //Console.WriteLine(" Matrix:" + time + " ms");
+            //cmtx * cmtx;
+            //Matrix mtx = (cmtx * cmtx).ToMatrix();
+            //mtx.Print();
 
             #region 構造体・配列受け渡しテスト
             //CsObject obj = new CsObject{x=1, y=2};
@@ -835,6 +861,9 @@ public static class NativeMethod {
 
 
     #region テストコード
+    [DllImport("MlLib.dll")]
+    public static extern void dbgMain();
+
     [DllImport("MlLib.dll")]
     public static extern void fnMlLib();
     [DllImport("MlLib.dll")]

@@ -10,6 +10,8 @@
 #include <memory>
 #include <algorithm>
 #include <exception>
+#include <random>
+#include <chrono>
 
 #ifndef DBG
 #if _DEBUG
@@ -120,8 +122,9 @@ namespace myk::lib {
             sst << margin << owari << "\n";
         }
         sst << owari << std::endl;
-        std::cout << sst.str();
-        return sst.str();
+        const auto result = sst.str();
+        std::cout << result;
+        return result;
     }
 
     bool Matrix::checkMatrixCULSize() noexcept(false) {
@@ -132,6 +135,15 @@ namespace myk::lib {
             }
         }
         return true;
+    }
+
+    Matrix& Matrix::operator =(Matrix&& other) {
+        if (this != &other) {
+            CUL = other.CUL;
+            ROW = other.ROW;
+            _matrix = std::move(other._matrix);
+        }
+        return *this;
     }
 
     uint32_t Matrix::test() {
@@ -237,6 +249,7 @@ namespace myk::lib {
         }
         return true;
     }
+
 #pragma endregion //Matrixクラスに関するグローバル関数
 
 } //namespace end myk::lib
@@ -442,7 +455,47 @@ Info* getInfoStruct() {
 myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
     return myk::lib::Matrix(ROW, CUL);
 }
+
 #endif
+
+void dbgMain(void) {
+    using namespace myk;
+    using namespace myk::lib;
+    using namespace std;
+    std::random_device seed_gen;
+    std::mt19937 engine{ seed_gen() };
+    std::uniform_real_distribution<> dist{0, 50};
+
+    const int32_t size = 300;
+    std::vector<std::vector<double>> array;
+    for (int32_t i = 0; i < size; ++i) {
+        array.emplace_back(std::vector<double>());
+        for (int32_t j = 0; j < size; ++j) {
+            array.at(i).emplace_back(dist(engine));
+        }
+    }
+    std::cout << "初期化完了: Size=" << std::to_string(size) << std::endl;
+
+    myk::Matrix cmtx = Matrix(array);
+    //CMatrix cmtx2 = new(new double[,]{ { 2 }, { 2 }, { 2 } });
+
+    chrono::system_clock::time_point start, end;
+    double times = 0;
+    Matrix mt = Matrix(0, 0);
+    for (int count = 0; count < 10; ++count) {
+        start = chrono::system_clock::now();
+        mt = multiply(cmtx, cmtx);
+        for (int i = 0; i < 3; i++) {
+            mt = mt * cmtx;
+        }
+        end = chrono::system_clock::now();
+        auto t = static_cast<double>(chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000.0);
+        times += t;
+        std::cout << count << "回目 秒数: " << t << "ms" << std::endl;
+    }
+    double time = times / 10;
+    std::cout << " Matrix:" << time << " ms" << std::endl;
+}
 #pragma endregion //テスト関数
 
 #pragma endregion

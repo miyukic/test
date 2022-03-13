@@ -32,8 +32,8 @@ namespace myk {
         class MLLIB_API Matrix {
             std::vector<std::vector<double>> _matrix;
         public:
-            const uint32_t ROW = 1;
-            const uint32_t CUL = 1;
+            uint32_t ROW = 1;
+            uint32_t CUL = 1;
 
             /// <summary>
             /// 行と列を指定して行列オブジェクトを生成します。
@@ -108,6 +108,11 @@ namespace myk {
             /// </summary>
             /// <returns>出力の内容を返します。</returns>
             std::string print();
+
+            /// <summary>
+            /// ムーブ代入演算子
+            /// </summary>
+            Matrix& operator=(Matrix&&);
 
             uint32_t test();
         private:
@@ -230,6 +235,9 @@ extern "C" {
 }
 
 #endif
+extern "C" {
+    MLLIB_API void dbgMain(void);
+}
 #pragma endregion
 
 

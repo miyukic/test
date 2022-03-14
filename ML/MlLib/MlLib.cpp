@@ -12,6 +12,7 @@
 #include <exception>
 #include <random>
 #include <chrono>
+#include <limits>
 
 #ifndef DBG
 #if _DEBUG
@@ -33,25 +34,25 @@
 #endif
 
 
+
 #pragma region cpp 
 namespace myk::lib {
 #pragma region Matrixクラスの実装
-
     // コンストラクタ
     // 要素は初期化しない
-    //Matrix::Matrix(uint32_t row, uint32_t cul) : Matrix(row, cul, 0.0F) {}
-    Matrix::Matrix(uint32_t row, uint32_t cul) :
+    //Matrix::Matrix(UINT row, UINT cul) : Matrix(row, cul, 0.0F) {}
+    Matrix::Matrix(UINT row, UINT cul) :
         ROW{ row }, CUL{ cul }, _matrix(row, std::vector<double>(cul))
     {}
 
     // コンストラクタ
-    Matrix::Matrix(uint32_t row, uint32_t cul, double value) :
+    Matrix::Matrix(UINT row, UINT cul, double value) :
         ROW{ row }, CUL{ cul },
         _matrix(row, std::vector<double>(cul, value)) { }
 
     // vectorをムーブして初期化するコンストラクタ
     Matrix::Matrix(const std::vector<std::vector<double>>&& _matrix) :
-        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{static_cast<uint32_t>(_matrix.at(0).size())} {
+        _matrix{ _matrix }, ROW{ static_cast<UINT>(_matrix.size())}, CUL{static_cast<UINT>(_matrix.at(0).size())} {
         // 妥協の産物...ジャグ配列を禁止にしたい
         // テンプレートを使わずに二次元目の要素数を固定する方法
         checkMatrixCULSize();
@@ -59,19 +60,19 @@ namespace myk::lib {
 
     // vectorを参照して初期化するコンストラクタ
     Matrix::Matrix(const std::vector<std::vector<double>>& _matrix) :
-        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{static_cast<uint32_t>(_matrix.at(0).size())} {
+        _matrix{ _matrix }, ROW{ static_cast<UINT>(_matrix.size())}, CUL{static_cast<UINT>(_matrix.at(0).size())} {
         checkMatrixCULSize();
     }
 
     // vectorをムーブして初期化するコンストラクタ(ジャグ配列チェックしない場合はtrue)
     Matrix::Matrix(const std::vector<std::vector<double>>&& _matrix, bool unCheckJaddedArray) :
-        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{static_cast<uint32_t>(_matrix.at(0).size())} {
+        _matrix{ _matrix }, ROW{ static_cast<UINT>(_matrix.size())}, CUL{static_cast<UINT>(_matrix.at(0).size())} {
         if (!unCheckJaddedArray) checkMatrixCULSize();
     }
 
     // vectorを参照して初期化するコンストラクタ(ジャグ配列チェックをしない場合はtrue)
     Matrix::Matrix(const std::vector<std::vector<double>>& _matrix, bool unCheckJaddedArray) :
-        _matrix{ _matrix }, ROW{ static_cast<uint32_t>(_matrix.size())}, CUL{ static_cast<uint32_t>(_matrix.at(0).size()) } {
+        _matrix{ _matrix }, ROW{ static_cast<UINT>(_matrix.size())}, CUL{ static_cast<UINT>(_matrix.at(0).size()) } {
         if (!unCheckJaddedArray) checkMatrixCULSize();
     }
 
@@ -80,12 +81,12 @@ namespace myk::lib {
         ROW{ from.ROW }, CUL{ from.CUL }, _matrix(from._matrix) { }
 
     // 行と列を指定してその要素の参照を取得（変更可）
-    double& Matrix::at(uint32_t ROW, uint32_t CUL) noexcept(false) {
+    double& Matrix::at(UINT ROW, UINT CUL) noexcept(false) {
         return _matrix.at(ROW).at(CUL);
     }
 
     // 行と列を指定してその要素の値を取得（変更不可）
-    double Matrix::read(uint32_t ROW, uint32_t CUL) const noexcept(false) {
+    double Matrix::read(UINT ROW, UINT CUL) const noexcept(false) {
         try {
             return _matrix.at(ROW).at(CUL);
         } catch (std::out_of_range& e) {
@@ -146,7 +147,7 @@ namespace myk::lib {
         return *this;
     }
 
-    uint32_t Matrix::test() {
+    UINT Matrix::test() {
         return 321 * 42 + 12 * 3;
     }
 
@@ -171,6 +172,25 @@ namespace myk::lib {
             }
         }
         return newMatr;
+    }
+
+    // 行列積をの結果を引数（result）経由で返す
+    void multiply(const Matrix& lhs, const Matrix& rhs, Matrix& result) noexcept(false) {
+        using namespace std::literals::string_literals;
+        if (lhs.CUL != rhs.ROW) {
+            throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
+                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
+                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
+        }
+        Matrix newMatr(lhs.ROW, rhs.CUL);
+        for (size_t r = 0; r < lhs.ROW; ++r) {
+            for (size_t c = 0; c < rhs.CUL; ++c) {
+                for (size_t k = 0; k < lhs.CUL; ++k) {
+                    newMatr.at(r, c) += lhs.read(r, k) * rhs.read(k, c);
+                }
+            }
+        }
+        result = std::move(newMatr);
     }
 
     // 行列スカラー倍
@@ -311,8 +331,8 @@ namespace myk {
         /// 使っていない不要な行列を削除する。
         /// 解放に成功したMatrixオブジェクトの個数を返す。
         /// </summary>
-        uint32_t memoryRelease() {
-            uint32_t c = 0;
+        UINT memoryRelease() {
+            UINT c = 0;
             for (ID id : _deletedNum) {
                 if (id <= _mtxList.size()) {
                     _mtxList.at(id).release();
@@ -415,7 +435,7 @@ namespace myk {
 
 namespace myk {
     inline namespace test {
-        myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
+        myk::lib::Matrix getMatrix(UINT ROW, UINT CUL) {
             return myk::lib::Matrix(ROW, CUL);
         }
     }
@@ -452,7 +472,7 @@ Info* getInfoStruct() {
 }
 
 
-myk::lib::Matrix getMatrix(uint32_t ROW, uint32_t CUL) {
+myk::lib::Matrix getMatrix(UINT ROW, UINT CUL) {
     return myk::lib::Matrix(ROW, CUL);
 }
 
@@ -484,9 +504,9 @@ void dbgMain(void) {
     Matrix mt = Matrix(0, 0);
     for (int count = 0; count < 10; ++count) {
         start = chrono::system_clock::now();
-        mt = multiply(cmtx, cmtx);
+        multiply(cmtx, cmtx, mt);
         for (int i = 0; i < 3; i++) {
-            mt = mt * cmtx;
+            multiply(mt, cmtx, mt);
         }
         end = chrono::system_clock::now();
         auto t = static_cast<double>(chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000.0);
@@ -513,7 +533,7 @@ int fnMlLib(void) {
 }
 
 // Matrixオブジェクトを生成しidを返す。
-myk::ID createNativeMatrixRCV(uint32_t ROW, uint32_t CUL, double value) {
+myk::ID createNativeMatrixRCV(myk::UINT ROW, myk::UINT CUL, double value) {
     DBG(ROW);
     DBG(CUL);
     DBG(value);
@@ -532,13 +552,13 @@ void deleteNativeMatrix(myk::ID id) {
 }
 
 // 不要な行列を削除する
-uint32_t unusedNatMatRelease() {
+myk::UINT unusedNatMatRelease() {
     using namespace myk;
     ManageMTXObj& mmo = ManageMTXObj::getInstance();
     return mmo.memoryRelease();
 }
 
-myk::ID createNativeMatrixARC(double* arr, uint32_t len, uint32_t ROW, uint32_t CUL) {
+myk::ID createNativeMatrixARC(double* arr, myk::UINT len, myk::UINT ROW, myk::UINT CUL) {
     using namespace myk;
     std::vector<std::vector<double>> vec(ROW, std::vector<double>(CUL));
     for (size_t r = 0; r < ROW; ++r) {
@@ -582,13 +602,13 @@ myk::ID nativeMatrixAddSC(myk::ID lId, double value) {
     return mmo.registMTXObj(add(upm, value));
 }
 
-uint32_t getROW(myk::ID id) {
+myk::UINT getROW(myk::ID id) {
     using namespace myk;
     ManageMTXObj& mmo = ManageMTXObj::getInstance();
     return mmo.getUPtrMtx(id)->ROW;
 }
 
-uint32_t getCUL(myk::ID id) {
+myk::UINT getCUL(myk::ID id) {
     using namespace myk;
     ManageMTXObj& mmo = ManageMTXObj::getInstance();
     return mmo.getUPtrMtx(id)->CUL;

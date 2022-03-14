@@ -26,14 +26,22 @@ typedef int BOOL;
 
 namespace myk {
 
+#ifdef _WIN64
+    typedef uint64_t UINT;
+#elif _WIN32
+    typedef uint32_t UINT;
+#elif
+    typedef uint64_t UINT;
+    //typedef uint32_t UINT;
+#endif
 
     namespace lib {
 
         class MLLIB_API Matrix {
             std::vector<std::vector<double>> _matrix;
         public:
-            uint32_t ROW = 1;
-            uint32_t CUL = 1;
+            UINT ROW = 1;
+            UINT CUL = 1;
 
             /// <summary>
             /// 行と列を指定して行列オブジェクトを生成します。
@@ -42,7 +50,7 @@ namespace myk {
             /// </summary>
             /// <param name="row"></param>
             /// <param name="cul"></param>
-            Matrix(uint32_t row, uint32_t cul);
+            Matrix(UINT row, UINT cul);
 
             /// <summary>
             /// 行と列とその要素を指定して行列オブジェクトを生成します。
@@ -51,7 +59,7 @@ namespace myk {
             /// <param name="row"></param>
             /// <param name="cul"></param>
             /// <param name="value"></param>
-            Matrix(uint32_t row, uint32_t cul, double value);
+            Matrix(UINT row, UINT cul, double value);
 
             /// <summary>
             /// vectorオブジェクトをムーブしてMatrixオブジェクトを生成します。
@@ -92,7 +100,7 @@ namespace myk {
             /// <param name="ROW"></param>
             /// <param name="CUL"></param>
             /// <returns></returns>
-            double& at(uint32_t ROW, uint32_t CUL) noexcept(false);
+            double& at(UINT ROW, UINT CUL) noexcept(false);
 
             /// <summary>
             /// 行と列を指定して値を読みます
@@ -101,7 +109,7 @@ namespace myk {
             /// <param name="ROW"></param>
             /// <param name="CUL"></param>
             /// <returns></returns>
-            double read(uint32_t ROW, uint32_t CUL) const noexcept(false);
+            double read(UINT ROW, UINT CUL) const noexcept(false);
 
             /// <summary>
             /// Matrix の内容を標準出力に出力します。
@@ -114,7 +122,7 @@ namespace myk {
             /// </summary>
             Matrix& operator=(Matrix&&);
 
-            uint32_t test();
+            UINT test();
         private:
 
             bool checkMatrixCULSize() noexcept(false);
@@ -127,6 +135,14 @@ namespace myk {
         /// <param name="rhs"></param>
         /// <returns></returns>
         MLLIB_API Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false);
+
+        /// <summary>
+        /// 行列積をの結果を引数（result）経由で返す
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="result"></param>
+        /// </summary>
+        MLLIB_API void multiply(const Matrix& lhs, const Matrix& rhs, Matrix& result) noexcept(false);
 
         /// <summary>
         /// 行列をスカラー倍
@@ -205,7 +221,7 @@ namespace myk {
     struct MLLIB_API MatrixObjFromC {
         int size;
         myk::ID id;
-        uint32_t ROW, CUL;
+        myk::UINT ROW, CUL;
         double* array;
     };
 
@@ -231,7 +247,7 @@ extern "C" {
     MLLIB_API int* getArray();
     MLLIB_API Info* getInfoStruct();
 
-    MLLIB_API myk::lib::Matrix GetMatrix(uint32_t, uint32_t);
+    MLLIB_API myk::lib::Matrix GetMatrix(myk::UINT, myk::UINT);
 }
 
 #endif
@@ -256,7 +272,7 @@ extern "C" {
     /// <param name="">列</param>
     /// <param name="">初期値</param>
     /// <returns>行列オブジェクトのID</returns>
-    MLLIB_API myk::ID createNativeMatrixRCV(uint32_t, uint32_t, double);
+    MLLIB_API myk::ID createNativeMatrixRCV(myk::UINT, myk::UINT, double);
 
     /// <summary>
     /// IDを指定して行列を削除
@@ -268,7 +284,7 @@ extern "C" {
     /// 使用していない行列をメモリから削除する。
     /// </summary>
     /// <returns>削除した行列の数</returns>
-    MLLIB_API uint32_t unusedNatMatRelease();
+    MLLIB_API myk::UINT unusedNatMatRelease();
 
     /// <summary>
     /// </summary>
@@ -277,7 +293,7 @@ extern "C" {
     /// <param name="">行</param>
     /// <param name="">列</param>
     /// <returns></returns>
-    MLLIB_API myk::ID createNativeMatrixARC(double*, uint32_t, uint32_t, uint32_t);
+    MLLIB_API myk::ID createNativeMatrixARC(double*, myk::UINT, myk::UINT, myk::UINT);
 
     /// <summary>
     /// 行列積を計算し結果の行列のIDを返す
@@ -300,14 +316,14 @@ extern "C" {
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    MLLIB_API uint32_t getROW(myk::ID id);
+    MLLIB_API myk::UINT getROW(myk::ID id);
 
     /// <summary>
     /// IDの列を取得
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    MLLIB_API uint32_t getCUL(myk::ID id);
+    MLLIB_API myk::UINT getCUL(myk::ID id);
 
     /// <summary>
     /// IDを指定し行列の内容を標準出力する。

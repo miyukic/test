@@ -42,8 +42,13 @@ public:
 
         Logger::WriteMessage(answer.print().c_str());
         Matrix mtx12 = multiply(mtx1, mtx2);
+        Matrix mtx12_2 = Matrix(0, 0);
+        multiply(mtx1, mtx2, mtx12_2);
         //Matrix mtx12 = mtx1 * mtx2;
         Logger::WriteMessage(mtx12.print().c_str());
+        bool result = false;
+        result |= mtx12 == answer;
+        result |= mtx12_2 == answer;
         bool result = mtx12 == answer;
 
         Assert::AreEqual(true, result);

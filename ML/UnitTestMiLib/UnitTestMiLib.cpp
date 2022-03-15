@@ -49,7 +49,6 @@ public:
         bool result = false;
         result |= mtx12 == answer;
         result |= mtx12_2 == answer;
-        bool result = mtx12 == answer;
 
         Assert::AreEqual(true, result);
     }

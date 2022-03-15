@@ -157,16 +157,19 @@ namespace myk::lib {
     // 行列積
     Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
         using namespace std::literals::string_literals;
-        if (lhs.CUL != rhs.ROW) {
+        auto lCUL = lhs.CUL;
+        auto rROW = rhs.ROW;
+        if (lCUL != rROW) {
             throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
-                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
-                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
+                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lCUL)
+                + "右辺 Matrix row = "s + std::to_string(rROW) + "cul = "s + std::to_string(rhs.CUL);
         }
-        Matrix newMatr(lhs.ROW, rhs.CUL);
-        for (size_t r = 0; r < lhs.ROW; ++r) {
-            for (size_t c = 0; c < rhs.CUL; ++c) {
-                //	newMatr.at(0, 0) = lhs.read(0, 0) * rhs.read(0, 0) + lhs.read(0, 1) * rhs.read(1, 0);
-                for (size_t k = 0; k < lhs.CUL; ++k) {
+        auto rCUL = rhs.CUL;
+        auto lROW = lhs.ROW;
+        Matrix newMatr(lROW, rCUL);
+        for (size_t r = 0; r < lROW; ++r) {
+            for (size_t c = 0; c < rCUL; ++c) {
+                for (size_t k = 0; k < lCUL; ++k) {
                     newMatr.at(r, c) += lhs.read(r, k) * rhs.read(k, c);
                 }
             }
@@ -177,15 +180,19 @@ namespace myk::lib {
     // 行列積をの結果を引数（result）経由で返す
     void multiply(const Matrix& lhs, const Matrix& rhs, Matrix& result) noexcept(false) {
         using namespace std::literals::string_literals;
-        if (lhs.CUL != rhs.ROW) {
+        auto lCUL = lhs.CUL;
+        auto rROW = rhs.ROW;
+        if (lCUL != rROW) {
             throw "計算できない行列です。\n左辺の行と右辺の列が一致している必要があります。\n"s
-                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lhs.CUL)
-                + "右辺 Matrix row = "s + std::to_string(rhs.ROW) + "cul = "s + std::to_string(rhs.CUL);
+                + "左辺 Matrix row = "s + std::to_string(lhs.ROW) + "cul = "s + std::to_string(lCUL)
+                + "右辺 Matrix row = "s + std::to_string(rROW) + "cul = "s + std::to_string(rhs.CUL);
         }
-        Matrix newMatr(lhs.ROW, rhs.CUL);
-        for (size_t r = 0; r < lhs.ROW; ++r) {
-            for (size_t c = 0; c < rhs.CUL; ++c) {
-                for (size_t k = 0; k < lhs.CUL; ++k) {
+        auto rCUL = rhs.CUL;
+        auto lROW = lhs.ROW;
+        Matrix newMatr(lROW, rCUL);
+        for (size_t r = 0; r < lROW; ++r) {
+            for (size_t c = 0; c < rCUL; ++c) {
+                for (size_t k = 0; k < lCUL; ++k) {
                     newMatr.at(r, c) += lhs.read(r, k) * rhs.read(k, c);
                 }
             }
@@ -482,6 +489,7 @@ void dbgMain(void) {
     using namespace myk;
     using namespace myk::lib;
     using namespace std;
+    std::cout << "コンパイル時間: " << __TIME__ << std::endl;
     std::random_device seed_gen;
     std::mt19937 engine{ seed_gen() };
     std::uniform_real_distribution<> dist{0, 50};
@@ -502,11 +510,11 @@ void dbgMain(void) {
     chrono::system_clock::time_point start, end;
     double times = 0;
     Matrix mt = Matrix(0, 0);
-    for (int count = 0; count < 10; ++count) {
+    for (auto count = 0; count < 10; ++count) {
+        mt = multiply(cmtx, cmtx);
         start = chrono::system_clock::now();
-        multiply(cmtx, cmtx, mt);
-        for (int i = 0; i < 3; i++) {
-            multiply(mt, cmtx, mt);
+        for (auto i = 0; i < 3; i++) {
+            mt = multiply(mt, cmtx);
         }
         end = chrono::system_clock::now();
         auto t = static_cast<double>(chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000.0);

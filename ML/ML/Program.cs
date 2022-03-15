@@ -774,8 +774,8 @@ namespace Myk {
             double times = 0;
             Matrix? mt = null;
             for (int count = 0; count < 10; ++count) {
-                sw.Start();
                 mt = cmtx * cmtx;
+                sw.Start();
                 for (int i = 0; i < 3; i++) {
                     mt = mt * cmtx;
                 }

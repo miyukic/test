@@ -43,7 +43,9 @@ namespace myk::lib {
     //Matrix::Matrix(UINT row, UINT cul) : Matrix(row, cul, 0.0F) {}
     Matrix::Matrix(UINT row, UINT cul) :
         ROW{ row }, CUL{ cul }, _matrix(row, std::vector<double>(cul))
-    {}
+    {
+        //std::cout << "_matrix.at(0).size() = "  << _matrix[0].size() << std::endl;
+    }
 
     // コンストラクタ
     Matrix::Matrix(UINT row, UINT cul, double value) :
@@ -81,14 +83,14 @@ namespace myk::lib {
         ROW{ from.ROW }, CUL{ from.CUL }, _matrix(from._matrix) { }
 
     // 行と列を指定してその要素の参照を取得（変更可）
-    double& Matrix::at(UINT ROW, UINT CUL) noexcept(false) {
-        return _matrix.at(ROW).at(CUL);
+    inline double& Matrix::at(UINT row, UINT cul) noexcept(false) {
+        return _matrix.at(row).at(cul);
     }
 
     // 行と列を指定してその要素の値を取得（変更不可）
-    double Matrix::read(UINT ROW, UINT CUL) const noexcept(false) {
+    inline double Matrix::read(UINT row, UINT cul) const noexcept(false) {
         try {
-            return _matrix.at(ROW).at(CUL);
+            return _matrix.at(row).at(cul);
         } catch (std::out_of_range& e) {
             std::cerr << "Matrix::read で例外が発生しました:" << e.what() << std::endl;
             return 0;
@@ -155,7 +157,7 @@ namespace myk::lib {
 
 #pragma region Matrixクラスに関するグローバル関数
     // 行列積
-    Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
+    inline Matrix multiply(const Matrix& lhs, const Matrix& rhs) noexcept(false) {
         using namespace std::literals::string_literals;
         auto lCUL = lhs.CUL;
         auto rROW = rhs.ROW;
@@ -178,7 +180,7 @@ namespace myk::lib {
     }
 
     // 行列積をの結果を引数（result）経由で返す
-    void multiply(const Matrix& lhs, const Matrix& rhs, Matrix& result) noexcept(false) {
+    inline void multiply(const Matrix& lhs, const Matrix& rhs, Matrix& result) noexcept(false) {
         using namespace std::literals::string_literals;
         auto lCUL = lhs.CUL;
         auto rROW = rhs.ROW;
@@ -201,18 +203,18 @@ namespace myk::lib {
     }
 
     // 行列スカラー倍
-    Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
-        Matrix newMatrix(lhs.ROW, lhs.CUL);
-        auto r = lhs.ROW;
-        auto c = lhs.CUL;
-        for (size_t i = 0; i < lhs.ROW; ++i) {
-            for (size_t j = 0; j < lhs.CUL; ++j) {
-                try {
+    inline Matrix multiply(const Matrix& lhs, double rhs) noexcept(false) {
+        auto lROW = lhs.ROW;
+        auto lCUL = lhs.CUL;
+        Matrix newMatrix(lROW, lCUL);
+        for (size_t i = 0; i < lROW; ++i) {
+            for (size_t j = 0; j < lCUL; ++j) {
+                //try {
                     newMatrix.at(i, j)
                         = lhs.read(i, j) * rhs;
-                } catch (std::out_of_range& e) {
-                    std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
-                }
+                //} catch (std::out_of_range& e) {
+                //    std::cout << "multiply(const MAtrix&, double) " << e.what() << std::endl;
+                //}
             }
         }
         return newMatrix;

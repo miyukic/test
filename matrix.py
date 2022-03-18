@@ -19,15 +19,18 @@ mt = None
 
 print("行列積開始")
 #測定開始
-start = time.time()
-
-mt = mtx * mtx
-for i in range(3):
-    mt = mt * mtx
+elapsedTime = 0
+times = 10
+for i in range(times):
+    start = time.time()
+    mt = mtx * mtx
+    for i in range(3):
+        mt = mt * mtx
+    end = time.time()
+    print(f"{i}回目: {end - start}秒")
+    elapsedTime += end - start
 
 #測定終了
-end = time.time()
 
-elapsedTime = end - start
-print(f"時間 {elapsedTime}")
+print(f"時間 {elapsedTime/times}秒")
 

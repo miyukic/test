@@ -24,6 +24,7 @@ std::array<double, SIZE*SIZE> multiply(const std::array<double, SIZE*SIZE>& lhs,
 
 
 int main() {
+std::cout << "開始" << std::endl;
 	std::random_device seed_gen;
 	std::mt19937 engine{seed_gen()};
 	std::uniform_real_distribution<> dist{0, 50};
@@ -52,4 +53,5 @@ int main() {
     //    std::cout << "\n";
     //}
     //std::cout << std::flush;
+    return 0;
 }

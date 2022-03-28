@@ -53,5 +53,6 @@ std::cout << "開始" << std::endl;
     //    std::cout << "\n";
     //}
     //std::cout << std::flush;
+
     return 0;
 }

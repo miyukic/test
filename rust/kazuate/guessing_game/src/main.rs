@@ -15,6 +15,8 @@ struct User {
     active: bool,
 }
 
+struct Result(bool, i32);
+
 
 fn func<'s>(val: &'s i32) -> &'s i32 {
     val
@@ -29,6 +31,7 @@ fn main() {
     出力する(&message);
     let val = 20;
     func(&val);
+
     let user1 = User {
         username: String::from("miyuki"),
         email: String::from("hogehoge@example.com"),

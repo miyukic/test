@@ -15,12 +15,14 @@ struct User {
     active: bool,
 }
 
-struct Result(bool, i32);
+pub trait TUser {
+    fn get_username(&self) -> String;
+    fn get_email(&self) -> String;
+    fn get_sign_in_count(&self) -> u64;
+    fn get_active(&self) -> bool;
 
-
-fn func<'s>(val: &'s i32) -> &'s i32 {
-    val
 }
+
 
 fn 出力する<'s>(msg: &'s String) {
     println!("{}", msg);

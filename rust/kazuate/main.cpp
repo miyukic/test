@@ -21,7 +21,7 @@ namespace myk {
             WHY Err;
         };
 
-        enum class Result {
+        enum class Result : uint8_t {
             OK,
             ERR,
         };

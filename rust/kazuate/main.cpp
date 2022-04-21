@@ -15,47 +15,49 @@ namespace myk {
     }
     
     namespace util {
-        template<class T, class WHY>
-        union Data {
-            T Ok;
-            WHY Err;
-        };
 
-        enum class Result : uint8_t {
-            OK,
-            ERR,
-        };
-    }
+    }// myk::util namespace end.
+     //
+    template<class T>
+    struct Ok {
+        T _ok;
+    };
 
-    template<class OK, class WHY>
+    template<class E>
+    struct Err {
+        E _err;
+    };
+
+
+    template<class T, class E>
     struct Result {
-        constexpr Result(util::Result result, util::Data<OK, WHY> data)
-            : _data{data} {
-            _result = result;
-        }
+
+        constexpr Result(Ok<T> data)
+            : _result{result}, _data{data} { }
+
         constexpr OK& value() & {
-            if(_result == util::Result::OK) {
+            if(_result == OK) {
                 return _data.Ok;
             } else {
                 panic();
             }
         }
         constexpr const OK& value() const& {
-            if(_result == util::Result::OK) {
+            if(_result == OK) {
                 return _data.Ok;
             } else {
                 panic();
             }
         }
         constexpr OK&& value() && {
-            if(_result == util::Result::OK) {
+            if(_result == OK) {
                 return std::move(_data.Ok);
             } else {
                 panic();
             }
         }
         constexpr const OK&& value() const&& {
-            if(_result == util::Result::OK) {
+            if(_result == OK) {
                 return std::move(_data.Ok);
             } else {
                 panic();
@@ -63,13 +65,20 @@ namespace myk {
         }
 
         constexpr explicit operator bool() const noexcept {
-            return _result == util::Result::OK;
+            return _result == OK;
         }
+
+
     private:
-        util::Data<OK, WHY> _data;
-        util::Result        _result;
+        template<class T, class E>
+        union _ResultData {
+            T Ok;
+            E Err;
+        };
+        ResultData<T, E> _data;
+        _Result _result;
     };
-}
+}// myk namespace end.
 
 template<class T>
 concept Comparable = std::integral<T> || std::floating_point<T>;
@@ -118,14 +127,16 @@ myk::Result<Matrix<T, U>, std::string> operator*(Matrix<T, U> lhs, Matrix<T, U> 
     U lCLM = lhs.getClm();
     U rROW = rhs.getRow();
     if (lCLM != rROW) {
-        return Result<Matrix<T, U>, std::string>();
+        myk::Result = myk::Err("不正な値です");
+        myk::Result = myk::Ok("hoge")
+        return myk::Err("不正な値です");
     }
 
     U rCLM = rhs.getClm();
     U lROW = lhs.getRow();
     auto newMat = Matrix<T, U>{};
 
-    return newMat;
+    return Result<Matrix<T, U>, std::string>(newMat);
 }
 
 int main() {

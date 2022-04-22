@@ -1,7 +1,7 @@
 #[warn(dead_code)]
-struct Matrix {
-    matrix: [f64],
-}
+//struct Matrix {
+//    matrix: [f64],
+//}
 
 impl Matrix {
     fn print(&self) -> () {
@@ -11,3 +11,4 @@ impl Matrix {
 fn main() {
 
 }
+

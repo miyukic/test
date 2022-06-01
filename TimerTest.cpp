@@ -2,19 +2,22 @@
 #include <cstdint>
 #include <thread>
 #include <chrono>
+#include <iomanip>
 #ifdef __unix
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <iomanip>
+#elif _WIN32
+#include <windows.h>
 #endif
 
-double getSystemTime();
+double getUptime();
 
 uint32_t times = 0;
-double systemTimeFrom = getSystemTime(); 
+double systemTimeFrom = getUptime();
 
-double getSystemTime() {
+double getUptime() {
+#ifdef __unix
 	const std::string PROC_UPTIME = "/proc/uptime";
 	std::ifstream ifs{PROC_UPTIME};
 	if (!ifs) {
@@ -30,14 +33,19 @@ double getSystemTime() {
 	
 	//std::cout << str << std::endl;
 	return stod(str);
+#elif _WIN32
+    double r = GetTickCount64() / 1000.0;
+    return r;
+#endif
 }
 
 void tick() {
     times++;
     if (times >= 60) {
-        double tc = getSystemTime();
-        double result = systemTimeFrom - tc;
 		std::cout << std::fixed << std::setprecision(8);
+        double tc = getUptime();
+		std::cout << "tc " << tc << std::endl;
+        double result = systemTimeFrom - tc;
 		std::cout << result << std::endl;
         systemTimeFrom = tc;
         times = 0;

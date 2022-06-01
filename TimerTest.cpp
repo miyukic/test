@@ -43,7 +43,8 @@ void tick() {
     times++;
     if (times >= 60) {
 		std::cout << std::fixed << std::setprecision(8);
-        double tc = getUptime();
+        //double tc = getUptime();
+        double i  = std::chrono::system_clock::now();
 		std::cout << "tc " << tc << std::endl;
         double result = systemTimeFrom - tc;
 		std::cout << result << std::endl;

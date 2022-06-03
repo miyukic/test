@@ -1,26 +1,29 @@
-//#include <iostream>
-//#include <string>
-//#include <cstdint>
-
-import mylib.ixx
+#include <iostream>
+#include <string>
+#include <cstdint>
 
 
-//class Hoge {
-//   inline static int count = 0;
-//   inline static int copycount = 0;
-//public:
-//   Hoge() {
-//       count++;
-//       std::cout << "Hoge " << count << std::endl;
-//   }
-//   Hoge (const Hoge& obj) {
-//       copycount++;
-//       std::cout << "Hogeコピーコンストラクタ " << copycount << std::endl;
-//   }
-//};
-//
+
+class Hoge {
+   inline static int count = 0;
+   inline static int copycount = 0;
+public:
+   Hoge() {
+       count++;
+       std::cout << "Hoge " << count << std::endl;
+   }
+   Hoge (const Hoge& obj) {
+       copycount++;
+       std::cout << "Hogeコピーコンストラクタ " << copycount << std::endl;
+   }
+    static bool operator==(const Hoge& rhs) const& {
+        return true;
+    }
+};
+
 //Hoge hoge;
-//
+
+
 //Hoge& sub() {
 //   return hoge;
 //}
@@ -34,7 +37,5 @@ import mylib.ixx
 // };
 
 int main() {
-//    Sample sample = Sample { "miyuki", "hogehoge@example.com", 0, true };
-//    return 0;
 }
 

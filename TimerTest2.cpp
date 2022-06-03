@@ -7,12 +7,15 @@
 #pragma comment(lib, "winmm.lib")
 #include <Windows.h>
 DWORD t = 0;
-int main() {
-    //timeBeginPeriod(1);
+int main(int argc, char* args[]) {
+    if (argc > 1) {
+        timeBeginPeriod(1);
+    }
     decltype(std::chrono::system_clock::now()) t;
     for (int i = 0; i < 10; ++i) {
         t = std::chrono::system_clock::now();
-        Sleep(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); //1ms待機
+        //Sleep(1);
         printf("%lf\n", 
                 static_cast<double>(
                     std::chrono::duration_cast<std::chrono::microseconds>(
@@ -21,7 +24,7 @@ int main() {
                     )
               );
     }
-    //timeEndPeriod(1);
+    timeEndPeriod(1);
     return 0;
 }
 

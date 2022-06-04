@@ -16,9 +16,9 @@ public:
        copycount++;
        std::cout << "Hogeコピーコンストラクタ " << copycount << std::endl;
    }
-    static bool operator==(const Hoge& rhs) const& {
-        return true;
-    }
+   static bool operator==(const Hoge& rhs) const& {
+       return true;
+   }
 };
 
 //Hoge hoge;

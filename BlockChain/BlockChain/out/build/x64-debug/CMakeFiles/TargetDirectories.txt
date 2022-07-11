@@ -1,0 +1,5 @@
+C:/Users/tik/source/test/BlockChain/BlockChain/out/build/x64-debug/CMakeFiles/edit_cache.dir
+C:/Users/tik/source/test/BlockChain/BlockChain/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/tik/source/test/BlockChain/BlockChain/out/build/x64-debug/BlockChain/CMakeFiles/BlockChain.dir
+C:/Users/tik/source/test/BlockChain/BlockChain/out/build/x64-debug/BlockChain/CMakeFiles/edit_cache.dir
+C:/Users/tik/source/test/BlockChain/BlockChain/out/build/x64-debug/BlockChain/CMakeFiles/rebuild_cache.dir

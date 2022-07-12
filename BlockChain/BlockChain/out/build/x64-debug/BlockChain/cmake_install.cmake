@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/tik/source/test/BlockChain/BlockChain/BlockChain
+# Install script for directory: F:/source1/test/BlockChain/BlockChain/BlockChain
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/tik/source/test/BlockChain/BlockChain/out/install/x64-debug")
+  set(CMAKE_INSTALL_PREFIX "F:/source1/test/BlockChain/BlockChain/out/install/x64-debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

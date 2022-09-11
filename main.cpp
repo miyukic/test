@@ -1,11 +1,15 @@
 ﻿#include <iostream>
 #include <string>
+#include <Windows.h>
 
 
 int main(int argc, char* argv[]) {
-    std::string hoge = "hogehoge";
-    std::string aiueo = "あいうえお";
+
+    SetConsoleOutputCP(CP_UTF8);
+    std::string hoge = "東京タワー";
     std::cout << hoge << std::flush;
-    std::cout << aiueo << std::endl;
+
+    std::wstring aiueo = L"あいうえお";
+    std::wcout << aiueo << std::endl;
 }
 

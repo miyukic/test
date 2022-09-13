@@ -1,15 +1,19 @@
-﻿#include <iostream>
+﻿#include <Windows.h>
+#include <iostream>
+#include <locale>
 #include <string>
-#include <Windows.h>
 
 
-int main(int argc, char* argv[]) {
+int main(/*int argc, char* argv[]*/) {
 
-    SetConsoleOutputCP(CP_UTF8);
-    std::string hoge = "東京タワー";
-    std::cout << hoge << std::flush;
+    //SetConsoleOutputCP(CP_UTF8);
+    std::wstring test = L"." + std::to_wstring(GetConsoleCP());
+    std::wcout.imbue(std::locale(std::locale("."+std::to_string(GetConsoleCP()),
+                    std::locale::ctype)));
+            std::wcout << L"東京スカイツリー" << test << std::endl;
 
-    std::wstring aiueo = L"あいうえお";
-    std::wcout << aiueo << std::endl;
+    //std::wcout.imbue(std::locale("Japanese"));
+    //std::wstring skytree = L"東京スカイツリー";
+    //std::wcout << skytree << std::endl;
 }
 

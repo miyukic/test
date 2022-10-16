@@ -1,4 +1,5 @@
 ﻿#include <Windows.h>
+#include <exception>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -8,7 +9,7 @@ class Base {
 public:
     int a = 0;
     virtual ~Base() {}
-    void baseFunc() {
+    void virtual baseFunc() {
         std::cout << "Base#baseFunc()\n";
     }
 };
@@ -16,7 +17,7 @@ public:
 class Sub : public Base {
     public:
     int b = 0;
-    void baseFunc() {
+    void baseFunc() override {
         std::cout << "Sub#baseFunc()\n";
     }
     void subFunc() {
@@ -38,15 +39,19 @@ int main(/*int argc, char* argv[]*/) {
     std::string s = "hogehoge";
     std::istringstream istm(s);
     std::cout << s << std::endl;
-    Base b{};
+    Base* b = new Sub{};
+    b->baseFunc();
 
-    //Sub* sub = reinterpret_cast<Sub*>(&b);
-    Other* sub = reinterpret_cast<Other*>(&b);
-    if (sub == nullptr) {
-        std::cout << "nullptr\n";
+    try {
+        Sub& sub = dynamic_cast<Sub&>(*b);
+        sub.baseFunc();
+        sub.subFunc();
+    } catch (std::bad_exception& e) {
+        std::cout << e.what() << std::endl;
     }
-    sub->baseFunc();
-    sub->subFunc();
+    //if (sub == nullptr) {
+    //    std::cout << "nullptr\n";
+    //}
     //auto& ifs = dynamic_cast<std::ifstream&>(istm);
     //if (&ifs == nullptr) {
     //    std::cout << "nullでした。\n";

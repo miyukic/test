@@ -1,62 +1,22 @@
-﻿#include <Windows.h>
-#include <exception>
 #include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
+#include <cstdio>
 
-class Base {
-public:
-    int a = 0;
-    virtual ~Base() {}
-    void virtual baseFunc() {
-        std::cout << "Base#baseFunc()\n";
-    }
+template<std::size_t N, double R = 0.1> struct Sum {
+    static constexpr double value = R + Sum<N-1>::value;
 };
 
-class Sub : public Base {
-    public:
-    int b = 0;
-    void baseFunc() override {
-        std::cout << "Sub#baseFunc()\n";
-    }
-    void subFunc() {
-        std::cout << "Sub#subFunc()" << this->b << "\n";
-    }
+template<> struct Sum<0> {
+    static constexpr double value = 0.0;
 };
 
-class Other {
-public:
-    void baseFunc() {
-        std::cout << "Other#baseFunc()\n";
-    }
-    void subFunc() {
-        std::cout << "Other#subFunc()\n";
-    }
-};
+int main() {
 
-int main(/*int argc, char* argv[]*/) {
-    std::string s = "hogehoge";
-    std::istringstream istm(s);
-    std::cout << s << std::endl;
-    Base* b = new Sub{};
-    b->baseFunc();
+    std::printf("%.16f", Sum<1000>::value);
 
-    try {
-        Sub& sub = dynamic_cast<Sub&>(*b);
-        sub.baseFunc();
-        sub.subFunc();
-    } catch (std::bad_exception& e) {
-        std::cout << e.what() << std::endl;
+    double sum = 0.0;
+    for (size_t i = 0; i < 1000; ++i) {
+        sum += 0.1;
     }
-    //if (sub == nullptr) {
-    //    std::cout << "nullptr\n";
-    //}
-    //auto& ifs = dynamic_cast<std::ifstream&>(istm);
-    //if (&ifs == nullptr) {
-    //    std::cout << "nullでした。\n";
-    //} else {
-    //    std::cout << "nullではありません。\n";
-    //}
+    std::printf("%.16f",sum);
+    return 0;
 }
-

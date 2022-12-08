@@ -1,8 +1,14 @@
 #include <stdio.h>
+#include <unistd.h>
 
 
 int main(void) {
-    printf("%f", 3.0);
+    for (;;) {
+        setvbuf(stdout, NULL, _IONBF, 0);
+        printf("message");
+        //fflush(stdout);
+        sleep(1);
+    }
     return 0;
 }
 

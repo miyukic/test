@@ -3,15 +3,18 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
 
-fn hoge<T>(h: &T) {
+use std::fmt::*;
+
+fn hoge<T>(h: &T) where T: Display {
+    println!("hoge {}", h);
 }
 
 fn main() {
-    let a = 3;
-    let b: &i32 = &a;
-    let c: &i32 = &a;
-    //println!("a={}", &a);
-    println!("b={}", &b);
-    println!("c={}", &c);
+    let mut a = 3;
+    let b: &mut i32 = &mut a;
+    *b = 5;
+    hoge(b);
+    println!("b={}", b);
+    println!("a={}", a);
     //hoge(&a);
 }

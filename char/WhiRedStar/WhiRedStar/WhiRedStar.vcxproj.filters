@@ -147,6 +147,9 @@
     <ClCompile Include="WhiRedStar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\icon.ico">
@@ -780,6 +783,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WhiRedStar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

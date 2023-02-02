@@ -1,8 +1,12 @@
-﻿#include "stdafx.h"
+﻿#include <type_traits>
+#include "stdafx.h"
 #include "WhiRedStar.h"
+
+typedef class Hoge {} *pHoge;
 
 void WhiRedStar::start() noexcept
 {
+	std::remove_pointer<pHoge>::type hoge;
 	// 背景の色を設定 | Set background color
 	Scene::SetBackground(ColorF{ 0.0, 0.0, 0.0 });
 	// 通常のフォントを作成 | Create a new font
